@@ -1,5 +1,9 @@
-function lostFocusAlert(){
-    prompt('Сохранить изменения?', 'нет данных');
+function lostFocusAlert() {
+
+
+    prompt('this:' + this);
+
+
 }
 
 

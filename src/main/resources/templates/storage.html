@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>EyeFramesList</title>
     <link rel="stylesheet" href="css/cssStorage.css">
-
+<script src="js/jsStorage.js"></script>
 </head>
 <body>
 
@@ -73,37 +73,37 @@
             <!-- for_each -->
             <tr class="frame_table_tr" data-th-each="frame : ${frames}">
 
-                <td><!-- firm -->
-                    <form  onblur="lostFocusAlert()" method="post" data-th-action="@{updateFrame}" >
-                        <input type="text" data-th-name="firm" data-th-value="${frame.firm}">
+                <td ><!-- firm -->
+                    <form method="post" data-th-action="@{updateFrame}" >
+                        <input onblur=this.form.submit() type="text" data-th-name="firm" data-th-value="${frame.firm}">
                         <input type="hidden" name="field" value="firm">
                         <input type="hidden" name="id" data-th-value="${frame.id}">
                     </form>
                 </td>
                 <td><!-- model -->
                     <form method="post" data-th-action="@{/updateFrame}" >
-                        <input type="text" data-th-name="model" data-th-value="${frame.model}">
+                        <input onblur=this.form.submit() type="text" data-th-name="model" data-th-value="${frame.model}">
                         <input type="hidden" name="field" value="model">
                         <input type="hidden" name="id" data-th-value="${frame.id}">
                     </form>
                 </td>
                 <td><!-- details -->
                     <form method="post" data-th-action="@{/updateFrame}" >
-                        <input type="text" data-th-name="details" data-th-value="${frame.details}">
+                        <input onblur=this.form.submit() type="text" data-th-name="details" data-th-value="${frame.details}">
                         <input type="hidden" name="field" value="details">
                         <input type="hidden" name="id" data-th-value="${frame.id}">
                     </form>
                 </td>
                 <td><!-- purchasePrice -->
                     <form method="post" data-th-action="@{/updateFrame}" >
-                        <input type="number" data-th-name="purchasePrice" data-th-value="${frame.purchasePrice}">
+                        <input onblur=this.form.submit() type="number" data-th-name="purchasePrice" data-th-value="${frame.purchasePrice}">
                         <input type="hidden" name="field" value="purchasePrice">
                         <input type="hidden" name="id" data-th-value="${frame.id}">
                     </form>
                 </td>
                 <td><!-- salePrice -->
                     <form method="post" data-th-action="@{/updateFrame}" >
-                        <input type="number" data-th-name="salePrice" data-th-value="${frame.salePrice}">
+                        <input onblur=this.form.submit() type="number" data-th-name="salePrice" data-th-value="${frame.salePrice}">
                         <input type="hidden" name="field" value="salePrice">
                         <input type="hidden" name="id" data-th-value="${frame.id}">
                     </form>
