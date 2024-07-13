@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>EyeFramesList</title>
+    <link rel="stylesheet" href="css/cssStorage.css">
+
+</head>
+<body>
+
+<!-- SAMBRERO-->
+<div class="sambrero_div">
+    <h1>
+        О п т и к а "Изяч"
+    </h1>
+    <h2>
+        Склад
+    </h2>
+    <form>
+        <input type="text" name="find0" size="20">
+        <button type="submit">
+            Найти
+        </button>
+        <hr>
+    </form>
+</div>
+
+
+<!-- LEFT MENU-->
+<div class="leftMenu_div">
+    <br><br><br>
+    <ul>
+        <li><p>
+            Заказы
+        </p></li>
+        <li><p>
+            Клиенты
+        </p></li>
+        <li><p>
+            Склад
+        </p></li>
+        <li><p>
+            Администратор
+        </p></li>
+    </ul>
+</div>
+
+
+<!-- ENTITIES-->
+<div class="entities_div">
+
+    <h2>
+        Оправы:
+    </h2>
+    <hr>
+    <div class="dto_div">
+        <!-- frames -----------|-----------|-----------|-->
+        <table class="frame_table">
+            <thead>
+            <tr>
+                <th>Фирма</th>
+                <th>Модель</th>
+                <th>Описание</th>
+                <th>Закупка</th>
+                <th>Розничная цена</th>
+                <th>Создано</th>
+                <th>Изменено</th>
+                <th><!-- Удалить --></th>
+            </tr>
+            </thead>
+            <tbody class="telo">
+
+            <!-- for_each -->
+            <tr class="frame_table_tr" data-th-each="frame : ${frames}">
+
+                <td><!-- firm -->
+                    <form  onblur="lostFocusAlert()" method="post" data-th-action="@{updateFrame}" >
+                        <input type="text" data-th-name="firm" data-th-value="${frame.firm}">
+                        <input type="hidden" name="field" value="firm">
+                        <input type="hidden" name="id" data-th-value="${frame.id}">
+                    </form>
+                </td>
+                <td><!-- model -->
+                    <form method="post" data-th-action="@{/updateFrame}" >
+                        <input type="text" data-th-name="model" data-th-value="${frame.model}">
+                        <input type="hidden" name="field" value="model">
+                        <input type="hidden" name="id" data-th-value="${frame.id}">
+                    </form>
+                </td>
+                <td><!-- details -->
+                    <form method="post" data-th-action="@{/updateFrame}" >
+                        <input type="text" data-th-name="details" data-th-value="${frame.details}">
+                        <input type="hidden" name="field" value="details">
+                        <input type="hidden" name="id" data-th-value="${frame.id}">
+                    </form>
+                </td>
+                <td><!-- purchasePrice -->
+                    <form method="post" data-th-action="@{/updateFrame}" >
+                        <input type="number" data-th-name="purchasePrice" data-th-value="${frame.purchasePrice}">
+                        <input type="hidden" name="field" value="purchasePrice">
+                        <input type="hidden" name="id" data-th-value="${frame.id}">
+                    </form>
+                </td>
+                <td><!-- salePrice -->
+                    <form method="post" data-th-action="@{/updateFrame}" >
+                        <input type="number" data-th-name="salePrice" data-th-value="${frame.salePrice}">
+                        <input type="hidden" name="field" value="salePrice">
+                        <input type="hidden" name="id" data-th-value="${frame.id}">
+                    </form>
+                </td>
+                <td><label  data-th-text="*{#temporals.format(frame.getCreatedAt(), 'dd.MM.yy')}"></label></td>
+                <td><label  data-th-text="*{#temporals.format(frame.getChangedAt(), 'dd.MM.yy')}"></label></td>
+                <td><button type="button">Удалить</button> </td>
+
+            </tr>
+            </tbody>
+        </table>
+        <br>
+        <br>
+        <br>
+        <form method="post" data-th-action="@{/createFrame}">
+            <table>
+                <caption style=" text-align:left">
+                    Добавить на склад новый товар
+                </caption>
+                <tbody>
+                <tr>
+                    <td><input type="text" placeholder="Фирма" name="firm"></td>
+                    <td><input type="text" placeholder="Модель" name="model"></td>
+                    <td><input type="text" placeholder="Описание" name="details"></td>
+                    <td><input type="text" placeholder="Цена_закупки" name="purchasePrice"></td>
+                    <td><input type="text" placeholder="Розничная_цена" name="salePrice"></td>
+                </tr>
+                <tr>
+                    <td>
+                        <button type="submit">Добавить запись</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+    <br>
+    <br>
+    <br>
+
+    <hr>
+    <!-- конец оправ-->
+    <!-- очк линзы-->
+    <div>
+        <h3>Очковые линзы в наличии:</h3>
+        <form>
+            <input type="text" size="20">
+            <button type="submit">Найти</button>
+        </form>
+        <br>
+        <table border="3">
+            <thead>
+            <tr>
+                <th> №</th>
+                <th> Фирма</th>
+                <th> Модель</th>
+                <th> Материал</th>
+                <th> Тип</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr data-th-each="glens : ${glenses}">
+                <td><label data-th-text="${glens.id}"></label></td>
+                <td><label data-th-text="${glens.firm}"></label></td>
+                <td><label data-th-text="${glens.model}"></label></td>
+                <td><label data-th-text="${glens.material}"></label></td>
+                <td><label data-th-text="${glens.type}"></label></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<hr>
+<!-- канец очк линз-->
+
+
+</body>
+</html>
+

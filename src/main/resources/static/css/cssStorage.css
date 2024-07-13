@@ -1,0 +1,36 @@
+.sambrero_div h1 {
+    background-color: royalblue;
+    color: antiquewhite;
+    border-radius: 15px;
+}
+
+.sambrero_div h2 {
+    color: cornflowerblue;
+}
+
+.leftMenu_div {
+    width: 300px;
+    background-color: royalblue;
+    color: darkturquoise;
+    border-radius: 30px;
+    display: inline;
+    border: fuchsia;
+}
+
+.entities_div {
+    position: relative;
+    width: 1400px;
+    right: -350px;
+    top: -150px;
+    background-color: azure;
+    color: sienna;
+}
+
+.frame_table {
+    border-spacing: 0;
+}
+
+tbody.telo tr:hover {
+    background: darkmagenta;
+    color: burlywood;
+}

@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: optica3
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/opticadb
+    username: rolek
+    password: 123
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+  flyway:
+    enabled: false
