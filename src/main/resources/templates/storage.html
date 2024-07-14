@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>EyeFramesList</title>
     <link rel="stylesheet" href="css/cssStorage.css">
-<script src="js/jsStorage.js"></script>
+    <script src="js/jsStorage.js"></script>
 </head>
 <body>
 
@@ -53,72 +53,7 @@
         Оправы:
     </h2>
     <hr>
-    <div class="dto_div">
-        <!-- frames -----------|-----------|-----------|-->
-        <table class="frame_table">
-            <thead>
-            <tr>
-                <th>Фирма</th>
-                <th>Модель</th>
-                <th>Описание</th>
-                <th>Закупка</th>
-                <th>Розничная цена</th>
-                <th>Создано</th>
-                <th>Изменено</th>
-                <th><!-- Удалить --></th>
-            </tr>
-            </thead>
-            <tbody class="telo">
-
-            <!-- for_each -->
-            <tr class="frame_table_tr" data-th-each="frame : ${frames}">
-
-                <td ><!-- firm -->
-                    <form method="post" data-th-action="@{updateFrame}" >
-                        <input onblur=this.form.submit() type="text" data-th-name="firm" data-th-value="${frame.firm}">
-                        <input type="hidden" name="field" value="firm">
-                        <input type="hidden" name="id" data-th-value="${frame.id}">
-                    </form>
-                </td>
-                <td><!-- model -->
-                    <form method="post" data-th-action="@{/updateFrame}" >
-                        <input onblur=this.form.submit() type="text" data-th-name="model" data-th-value="${frame.model}">
-                        <input type="hidden" name="field" value="model">
-                        <input type="hidden" name="id" data-th-value="${frame.id}">
-                    </form>
-                </td>
-                <td><!-- details -->
-                    <form method="post" data-th-action="@{/updateFrame}" >
-                        <input onblur=this.form.submit() type="text" data-th-name="details" data-th-value="${frame.details}">
-                        <input type="hidden" name="field" value="details">
-                        <input type="hidden" name="id" data-th-value="${frame.id}">
-                    </form>
-                </td>
-                <td><!-- purchasePrice -->
-                    <form method="post" data-th-action="@{/updateFrame}" >
-                        <input onblur=this.form.submit() type="number" data-th-name="purchasePrice" data-th-value="${frame.purchasePrice}">
-                        <input type="hidden" name="field" value="purchasePrice">
-                        <input type="hidden" name="id" data-th-value="${frame.id}">
-                    </form>
-                </td>
-                <td><!-- salePrice -->
-                    <form method="post" data-th-action="@{/updateFrame}" >
-                        <input onblur=this.form.submit() type="number" data-th-name="salePrice" data-th-value="${frame.salePrice}">
-                        <input type="hidden" name="field" value="salePrice">
-                        <input type="hidden" name="id" data-th-value="${frame.id}">
-                    </form>
-                </td>
-                <td><label  data-th-text="*{#temporals.format(frame.getCreatedAt(), 'dd.MM.yy')}"></label></td>
-                <td><label  data-th-text="*{#temporals.format(frame.getChangedAt(), 'dd.MM.yy')}"></label></td>
-                <td><button type="button">Удалить</button> </td>
-
-            </tr>
-            </tbody>
-        </table>
-        <br>
-        <br>
-        <br>
-        <form method="post" data-th-action="@{/createFrame}">
+        <form class="addNew" method="post" data-th-action="@{/createFrame}">
             <table>
                 <caption style=" text-align:left">
                     Добавить на склад новый товар
@@ -139,6 +74,84 @@
                 </tbody>
             </table>
         </form>
+    <div class="dto_div">
+        <!-- frames -----------|-----------|-----------|-->
+        <table class="frame_table">
+            <thead>
+            <tr>
+                <th>Фирма</th>
+                <th>Модель</th>
+                <th>Описание</th>
+                <th>Закупка</th>
+                <th>Розничная цена</th>
+                <th>Создано</th>
+                <th>Изменено</th>
+                <th><!-- Удалить --></th>
+            </tr>
+            </thead>
+            <tbody class="telo">
+            <tr><!-- если пусто -->
+                <td>
+                    <span data-th-if="${frames.isEmpty()}" data-th-text="Пусто"></span>
+                </td>
+            </tr>
+            <!-- for_each -->
+            <tr class="frame_table_tr" data-th-each="frame : ${frames}">
+
+
+                <td><!-- firm -->
+                    <form method="post" data-th-action="@{updateFrame}">
+                        <input onblur=this.form.submit() type="text" data-th-name="firm" data-th-value="${frame.firm}">
+                        <input type="hidden" name="field" value="firm">
+                        <input type="hidden" name="id" data-th-value="${frame.id}">
+                    </form>
+                </td>
+                <td><!-- model -->
+                    <form method="post" data-th-action="@{/updateFrame}">
+                        <input onblur=this.form.submit() type="text" data-th-name="model"
+                               data-th-value="${frame.model}">
+                        <input type="hidden" name="field" value="model">
+                        <input type="hidden" name="id" data-th-value="${frame.id}">
+                    </form>
+                </td>
+                <td><!-- details -->
+                    <form method="post" data-th-action="@{/updateFrame}">
+                        <input onblur=this.form.submit() type="text" data-th-name="details"
+                               data-th-value="${frame.details}">
+                        <input type="hidden" name="field" value="details">
+                        <input type="hidden" name="id" data-th-value="${frame.id}">
+                    </form>
+                </td>
+                <td><!-- purchasePrice -->
+                    <form method="post" data-th-action="@{/updateFrame}">
+                        <input onblur=this.form.submit() type="number" data-th-name="purchasePrice"
+                               data-th-value="${frame.purchasePrice}">
+                        <input type="hidden" name="field" value="purchasePrice">
+                        <input type="hidden" name="id" data-th-value="${frame.id}">
+                    </form>
+                </td>
+                <td><!-- salePrice -->
+                    <form method="post" data-th-action="@{/updateFrame}">
+                        <input onblur=this.form.submit() type="number" data-th-name="salePrice"
+                               data-th-value="${frame.salePrice}">
+                        <input type="hidden" name="field" value="salePrice">
+                        <input type="hidden" name="id" data-th-value="${frame.id}">
+                    </form>
+                </td>
+                <td><label data-th-text="*{#temporals.format(frame.getCreatedAt(), 'dd.MM.yy')}"></label></td>
+                <td><label data-th-text="*{#temporals.format(frame.getChangedAt(), 'dd.MM.yy')}"></label></td>
+                <td><!-- delete -->
+                    <form method="post" data-th-action="@{/deleteFrame/{id}(id=${frame.id})}">
+                        <input type="submit" value="Удалить">
+                    </form>
+                </td>
+
+            </tr>
+            </tbody>
+        </table>
+        <br>
+        <br>
+        <br>
     </div>
     <br>
     <br>

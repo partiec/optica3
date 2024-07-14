@@ -3,10 +3,7 @@ package ru.frolov.optica3.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import ru.frolov.optica3.dto.FrameDTO;
 import ru.frolov.optica3.entity.Frame;
 import ru.frolov.optica3.service.FrameService;
@@ -92,6 +89,11 @@ public class FrameController {
         return "redirect:/frame";
     }
 
+    @PostMapping("deleteFrame/{id:\\d+}")
+    public String deleteFrame(@PathVariable("id") Long id){
+        this.frameService.deleteById(id);
+        return "redirect:/frame";
+    }
 
 }
 

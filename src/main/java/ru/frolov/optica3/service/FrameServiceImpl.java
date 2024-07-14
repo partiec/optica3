@@ -29,5 +29,10 @@ public class FrameServiceImpl implements FrameService {
         return this.frameRepository.findById(id);
     }
 
-    
+    @Override
+    public void deleteById(Long id) {
+        this.frameRepository.deleteById(id);
+    }
+
+
 }

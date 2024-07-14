@@ -11,4 +11,6 @@ public interface FrameService {
     void saveFrame(Frame frame);
 
     Optional<Frame> findById(Long id);
+
+    void deleteById(Long id);
 }
