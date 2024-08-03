@@ -1,9 +1,12 @@
 package ru.frolov.optica3.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.frolov.optica3.entity.Frame;
-import ru.frolov.optica3.repo.FrameRepository;
+import ru.frolov.optica3.repository.FrameRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,13 +18,14 @@ public class FrameServiceImpl implements FrameService {
     private final FrameRepository frameRepository;
 
     @Override
-    public List<Frame> findAllFrames() {
+    public List<Frame> findAll() {
         return this.frameRepository.findAll();
     }
 
     @Override
-    public void saveFrame(Frame frame) {
-        this.frameRepository.save(frame);
+    public void save(Frame frame) {
+        if (frame != null)
+            this.frameRepository.save(frame);
     }
 
     @Override
@@ -32,6 +36,21 @@ public class FrameServiceImpl implements FrameService {
     @Override
     public void deleteById(Long id) {
         this.frameRepository.deleteById(id);
+    }
+
+    @Override
+    public Page<Frame> getPage(int pageNumber, int size) {
+        return this.frameRepository.findAll(PageRequest.of(pageNumber-1, size));
+    }
+
+    @Override
+    public List<Frame> sortBy(String field) {
+        return this.frameRepository.findAll(Sort.by(Sort.Direction.DESC, field));
+    }
+
+    @Override
+    public Page<Frame> getSortedPage(int pageNumber, int size, String field) {
+        return this.frameRepository.findAll(PageRequest.of(pageNumber-1, size).withSort(Sort.by(Sort.Direction.DESC, field)));
     }
 
 

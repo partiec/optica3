@@ -8,7 +8,9 @@ spring:
     password: 123
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: none
     show-sql: true
   flyway:
     enabled: false
+  profiles:
+    active: dev

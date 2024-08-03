@@ -46,14 +46,17 @@
 </div>
 
 
-<!-- ENTITIES-->
+<!-- FRAMES-->
 <div class="entities_div">
 
     <h2>
         Оправы:
     </h2>
     <hr>
-        <form class="addNew" method="post" data-th-action="@{/createFrame}">
+
+    <!-- Добавить на склад новый товар-->
+    <div class="addNew">
+        <form method="post" data-th-action="@{/api/createFrame}">
             <table>
                 <caption style=" text-align:left">
                     Добавить на склад новый товар
@@ -66,14 +69,24 @@
                     <td><input type="text" placeholder="Цена_закупки" name="purchasePrice"></td>
                     <td><input type="text" placeholder="Розничная_цена" name="salePrice"></td>
                 </tr>
-                <tr>
-                    <td>
-                        <button type="submit">Добавить запись</button>
-                    </td>
-                </tr>
                 </tbody>
             </table>
+            <div data-th-if="${errors}">
+                <ul>
+                    <li data-th-each="err : ${errors}" data-th-text="${err}">Ош...ка!</li>
+                </ul>
+            </div>
+            <button type="submit">Добавить запись</button>
         </form>
+    </div>
+
+    <div class="findFrame">
+        <form method="post" data-th-action="@{/api/findFrame}">
+            <input type="text" name="findString">
+            <button type="submit">Найти</button>
+        </form>
+    </div>
+
     <div class="dto_div">
         <!-- frames -----------|-----------|-----------|-->
         <table class="frame_table">
@@ -90,59 +103,75 @@
             </tr>
             </thead>
             <tbody class="telo">
-            <tr><!-- если пусто -->
+            <tr data-th-unless="${frames}"><!-- если пусто -->
                 <td>
-                    <span data-th-if="${frames.isEmpty()}" data-th-text="Пусто"></span>
+                    <span data-th-text="Пусто"></span>
                 </td>
             </tr>
-            <!-- for_each -->
+            <!-- for_each ------------------------------------------------------ -->
             <tr class="frame_table_tr" data-th-each="frame : ${frames}">
 
 
                 <td><!-- firm -->
-                    <form method="post" data-th-action="@{updateFrame}">
-                        <input onblur=this.form.submit() type="text" data-th-name="firm" data-th-value="${frame.firm}">
-                        <input type="hidden" name="field" value="firm">
+                    <form method="post" data-th-action="@{/api/updateFrame/}">
+                        <input onblur=this.form.submit()
+                               type="text"
+                               data-th-name="firm"
+                               data-th-value="${frame.firm}">
+                        <input type="hidden" name="whichField" value="firm">
                         <input type="hidden" name="id" data-th-value="${frame.id}">
+                        <input type="hidden" name="pageNumber" data-th-value="${pageNumber}">
                     </form>
                 </td>
                 <td><!-- model -->
-                    <form method="post" data-th-action="@{/updateFrame}">
-                        <input onblur=this.form.submit() type="text" data-th-name="model"
+                    <form method="post" data-th-action="@{/api/updateFrame}">
+                        <input onblur=this.form.submit()
+                               type="text"
+                               data-th-name="model"
                                data-th-value="${frame.model}">
-                        <input type="hidden" name="field" value="model">
+                        <input type="hidden" name="whichField" value="model">
                         <input type="hidden" name="id" data-th-value="${frame.id}">
+                        <input type="hidden" name="pageNumber" data-th-value="${pageNumber}">
                     </form>
                 </td>
                 <td><!-- details -->
-                    <form method="post" data-th-action="@{/updateFrame}">
-                        <input onblur=this.form.submit() type="text" data-th-name="details"
+                    <form method="post" data-th-action="@{/api/updateFrame}">
+                        <input onblur=this.form.submit()
+                               type="text"
+                               data-th-name="details"
                                data-th-value="${frame.details}">
-                        <input type="hidden" name="field" value="details">
+                        <input type="hidden" name="whichField" value="details">
                         <input type="hidden" name="id" data-th-value="${frame.id}">
+                        <input type="hidden" name="pageNumber" data-th-value="${pageNumber}">
                     </form>
                 </td>
                 <td><!-- purchasePrice -->
-                    <form method="post" data-th-action="@{/updateFrame}">
-                        <input onblur=this.form.submit() type="number" data-th-name="purchasePrice"
+                    <form method="post" data-th-action="@{/api/updateFrame}">
+                        <input onblur=this.form.submit()
+                               type="number"
+                               data-th-name="purchasePrice"
                                data-th-value="${frame.purchasePrice}">
-                        <input type="hidden" name="field" value="purchasePrice">
+                        <input type="hidden" name="whichField" value="purchasePrice">
                         <input type="hidden" name="id" data-th-value="${frame.id}">
+                        <input type="hidden" name="pageNumber" data-th-value="${pageNumber}">
                     </form>
                 </td>
                 <td><!-- salePrice -->
-                    <form method="post" data-th-action="@{/updateFrame}">
-                        <input onblur=this.form.submit() type="number" data-th-name="salePrice"
+                    <form method="post" data-th-action="@{/api/updateFrame}">
+                        <input onblur=this.form.submit()
+                               type="number"
+                               data-th-name="salePrice"
                                data-th-value="${frame.salePrice}">
-                        <input type="hidden" name="field" value="salePrice">
+                        <input type="hidden" name="whichField" value="salePrice">
                         <input type="hidden" name="id" data-th-value="${frame.id}">
+                        <input type="hidden" name="pageNumber" data-th-value="${pageNumber}">
                     </form>
                 </td>
                 <td><label data-th-text="*{#temporals.format(frame.getCreatedAt(), 'dd.MM.yy')}"></label></td>
                 <td><label data-th-text="*{#temporals.format(frame.getChangedAt(), 'dd.MM.yy')}"></label></td>
                 <td><!-- delete -->
-                    <form method="post" data-th-action="@{/deleteFrame/{id}(id=${frame.id})}">
-                        <input type="submit" value="Удалить">
+                    <form method="post" data-th-action="@{/api/deleteFrame/{id}(id=${frame.id})}">
+                        <input type="submit" value="Удалить" title="На хуй!">
                     </form>
                 </td>
 
@@ -150,15 +179,57 @@
             </tbody>
         </table>
         <br>
+
+        <label>
+            Всего элементов: <span data-th-text="${totalFrames}"></span>&nbsp;&nbsp;
+            Всего страниц: <span data-th-text="${totalPages}"></span>&nbsp;&nbsp;
+            <br>
+        </label>
+        <span data-th-each="i : ${#numbers.sequence(1, totalPages)}">
+  <a data-th-if="${i != pageNumber}" data-th-href="@{'/api/doneFrameOperationPage/' + ${i}}">[[${i}]]</a>
+  <span data-th-unless="${i != pageNumber}">[[${i}]]</span>
+</span>
+        <br>
+        <a data-th-if="${pageNumber > 1}" data-th-href="@{'/api/doneFrameOperationPage/' + ${pageNumber - 1}}">
+            <button>Назад</button>
+        </a>
+        <button data-th-unless="${pageNumber > 1}">Назад</button>
+
+        <a data-th-if="${pageNumber < totalPages}" data-th-href="@{'/api/doneFrameOperationPage/' + ${pageNumber + 1}}">
+            <button>Вперде</button>
+        </a>
+        <button data-th-unless="${pageNumber < totalPages}">Вперде</button>
+
+        <br>
         <br>
         <br>
     </div>
     <br>
     <br>
     <br>
+<!-- примерчик -->
+<!--    <label>-->
+<!--        Всего элементов: <span data-th-text="${totalElements}"></span>-->
+<!--        Всего страниц: <span data-th-text="${totalPages}"></span>-->
+<!--        <br>-->
+<!--    </label>-->
+<!--    <span data-th-each="i : ${#numbers.sequence(1, totalPages)}">-->
+<!--  <a data-th-if="${i != pageNumber}" data-th-href="@{'/api/page/' + ${i}}">[[${i}]]</a>-->
+<!--  <span data-th-unless="${i != pageNumber}">[[${i}]]</span>-->
+<!--</span>-->
+<!--    <br>-->
+<!--    <a data-th-if="${pageNumber > 1}" data-th-href="@{'/api/page/' + ${pageNumber - 1}}">-->
+<!--        <button>Назад</button>-->
+<!--    </a>-->
+<!--    <button data-th-unless="${pageNumber > 1}">Назад</button>-->
 
+<!--    <a data-th-if="${pageNumber < totalPages}" data-th-href="@{'/api/page/' + ${pageNumber + 1}}">-->
+<!--        <button>Вперде</button>-->
+<!--    </a>-->
+<!--    <button data-th-unless="${pageNumber < totalPages}">Вперде</button>-->
+<!-- конец примерчика -->
     <hr>
-    <!-- конец оправ-->
+
     <!-- очк линзы-->
     <div>
         <h3>Очковые линзы в наличии:</h3>
