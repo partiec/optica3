@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import ru.frolov.optica3.entity.Frame;
 import ru.frolov.optica3.repository.FrameRepository;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,8 +20,13 @@ public class FrameServiceImpl implements FrameService {
     private final FrameRepository frameRepository;
 
     @Override
-    public List<Frame> findAll() {
-        return this.frameRepository.findAll();
+    public Iterable<Frame> findAll() {
+        return new ArrayList<>(this.frameRepository.findAll());
+    }
+
+    @Override
+    public Iterable<Frame> findAllByFilter(String filter) {
+        return new ArrayList<>((Collection) this.frameRepository.findAllByFirmContainingIgnoreCase(filter));
     }
 
     @Override
@@ -40,7 +47,7 @@ public class FrameServiceImpl implements FrameService {
 
     @Override
     public Page<Frame> getPage(int pageNumber, int size) {
-        return this.frameRepository.findAll(PageRequest.of(pageNumber-1, size));
+        return this.frameRepository.findAll(PageRequest.of(pageNumber - 1, size));
     }
 
     @Override
@@ -50,7 +57,7 @@ public class FrameServiceImpl implements FrameService {
 
     @Override
     public Page<Frame> getSortedPage(int pageNumber, int size, String field) {
-        return this.frameRepository.findAll(PageRequest.of(pageNumber-1, size).withSort(Sort.by(Sort.Direction.DESC, field)));
+        return this.frameRepository.findAll(PageRequest.of(pageNumber - 1, size).withSort(Sort.by(Sort.Direction.DESC, field)));
     }
 
 

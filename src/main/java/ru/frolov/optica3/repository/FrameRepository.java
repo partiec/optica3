@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface FrameRepository extends JpaRepository<Frame, Long> {
 
+    List<Frame>findAllByFirmContainingIgnoreCase(String filter);
 
 }

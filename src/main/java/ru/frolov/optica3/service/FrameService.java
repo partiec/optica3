@@ -7,7 +7,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface FrameService {
-    List<Frame> findAll();
+    Iterable<Frame> findAll();
+
+    Iterable<Frame> findAllByFilter(String filter);
 
     void save(Frame frame);
 
@@ -17,7 +19,7 @@ public interface FrameService {
 
     Page<Frame> getPage(int offset, int size);
 
-    List<Frame> sortBy(String field);
+    Iterable<Frame> sortBy(String field);
 
     Page<Frame> getSortedPage(int offset, int size, String field);
 }
