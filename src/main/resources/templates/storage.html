@@ -9,41 +9,10 @@
 <body>
 
 <!-- SAMBRERO-->
-<div class="sambrero_div">
-    <h1>
-        О п т и к а "Изяч"
-    </h1>
-    <h2>
-        Склад
-    </h2>
-    <form>
-        <input type="text" name="find0" size="20">
-        <button type="submit">
-            Найти
-        </button>
-        <hr>
-    </form>
-</div>
-
+<div data-th-insert="fragments :: optica"></div>
 
 <!-- LEFT MENU-->
-<div class="leftMenu_div">
-    <br><br><br>
-    <ul>
-        <li><p>
-            Заказы
-        </p></li>
-        <li><p>
-            Клиенты
-        </p></li>
-        <li><p>
-            Склад
-        </p></li>
-        <li><p>
-            Администратор
-        </p></li>
-    </ul>
-</div>
+<div data-th-insert="fragments :: left_menu"></div>
 
 
 <!-- FRAMES-->
@@ -63,11 +32,16 @@
                 </caption>
                 <tbody>
                 <tr>
-                    <td><input type="text" placeholder="Фирма" name="firm"></td>
-                    <td><input type="text" placeholder="Модель" name="model"></td>
-                    <td><input type="text" placeholder="Описание" name="details"></td>
-                    <td><input type="text" placeholder="Цена_закупки" name="purchasePrice"></td>
-                    <td><input type="text" placeholder="Розничная_цена" name="salePrice"></td>
+                    <td><input type="text" placeholder="Фирма" name="firm"
+                               data-th-value="${framePayload == null ? null : framePayload.firm}"></td>
+                    <td><input type="text" placeholder="Модель" name="model"
+                               data-th-value="${framePayload == null ? null : framePayload.model}"></td>
+                    <td><input type="text" placeholder="Описание" name="details"
+                               data-th-value="${framePayload == null ? null : framePayload.details}"></td>
+                    <td><input type="text" placeholder="Цена_закупки" name="purchasePrice"
+                               data-th-value="${framePayload == null ? null : framePayload.purchasePrice}"></td>
+                    <td><input type="text" placeholder="Розничная_цена" name="salePrice"
+                               data-th-value="${framePayload == null ? null : framePayload.salePrice}"></td>
                 </tr>
                 </tbody>
             </table>
@@ -80,16 +54,16 @@
         </form>
     </div>
 
-    <!-- Найти -->
+    <!-- НАЙТИ -->
     <div class="findFrame">
-        <form method="get" data-th-action="@{/api/arrange/filteredFrames}">
+        <form method="get" data-th-action="@{/api/filtering/filteredFrames/1}">
             <input type="text" name="filter">
             <button type="submit">Найти</button>
         </form>
     </div>
 
     <div class="dto_div">
-        <!-- frames -----------|-----------|-----------|-->
+        <!-- Таблица-->
         <table class="frame_table">
             <thead>
             <tr>
@@ -109,13 +83,13 @@
                     <span data-th-text="Пусто"></span>
                 </td>
             </tr>
-            <!-- for_each ------------------------------------------------------ -->
+            <!-- for_each -------|-----|-----|-----|-----|--------------------------- -->
             <tr class="frame_table_tr" data-th-each="frame : ${frames}">
 
 
                 <td><!-- firm -->
                     <form method="post"
-                          data-th-action="@{/api/crud/updateFrame/{pageNumber}(pageNumber=${pageNumber})}">
+                          data-th-action="@{/api/crud/updateFrame}">
                         <input onblur=this.form.submit()
                                type="text"
                                data-th-name="firm"
@@ -125,9 +99,10 @@
                         <input type="hidden" name="pageNumber" data-th-value="${pageNumber}">
                     </form>
                 </td>
+
                 <td><!-- model -->
                     <form method="post"
-                          data-th-action="@{/api/crud/updateFrame/{pageNumber}(pageNumber=${pageNumber})}">
+                          data-th-action="@{/api/crud/updateFrame}">
                         <input onblur=this.form.submit()
                                type="text"
                                data-th-name="model"
@@ -137,9 +112,10 @@
                         <input type="hidden" name="pageNumber" data-th-value="${pageNumber}">
                     </form>
                 </td>
+
                 <td><!-- details -->
                     <form method="post"
-                          data-th-action="@{/api/crud/updateFrame/{pageNumber}(pageNumber=${pageNumber})}">
+                          data-th-action="@{/api/crud/updateFrame}">
                         <input onblur=this.form.submit()
                                type="text"
                                data-th-name="details"
@@ -149,9 +125,10 @@
                         <input type="hidden" name="pageNumber" data-th-value="${pageNumber}">
                     </form>
                 </td>
+
                 <td><!-- purchasePrice -->
                     <form method="post"
-                          data-th-action="@{/api/crud/updateFrame/{pageNumber}(pageNumber=${pageNumber})}">
+                          data-th-action="@{/api/crud/updateFrame}">
                         <input onblur=this.form.submit()
                                type="number"
                                data-th-name="purchasePrice"
@@ -161,9 +138,10 @@
                         <input type="hidden" name="pageNumber" data-th-value="${pageNumber}">
                     </form>
                 </td>
+
                 <td><!-- salePrice -->
                     <form method="post"
-                          data-th-action="@{/api/crud/updateFrame/{pageNumber}(pageNumber=${pageNumber})}">
+                          data-th-action="@{/api/crud/updateFrame}">
                         <input onblur=this.form.submit()
                                type="number"
                                data-th-name="salePrice"
@@ -173,12 +151,15 @@
                         <input type="hidden" name="pageNumber" data-th-value="${pageNumber}">
                     </form>
                 </td>
+
                 <td><label data-th-text="*{#temporals.format(frame.getCreatedAt(), 'dd.MM.yy')}"></label></td>
                 <td><label data-th-text="*{#temporals.format(frame.getChangedAt(), 'dd.MM.yy')}"></label></td>
-                <td><!-- delete -->
+
+                <td><!-- Удалить -->
                     <form method="post"
-                          data-th-action="@{/api/crud/deleteFrame/{id}/{pageNumber}(id=${frame.id}, pageNumber=${pageNumber})}">
-                        <input type="submit" value="Удалить" title="На хуй!">
+                          data-th-action="@{/api/crud/deleteFrame/{id}(id=${frame.id})}">
+                        <input type="hidden" name="pageNumber" data-th-value="${pageNumber}">
+                        <input type="submit" value="Удалить">
                     </form>
                 </td>
 
@@ -191,20 +172,26 @@
             Оправ: <span data-th-text="${totalFrames}"></span>&nbsp;&nbsp;&nbsp;&nbsp;
             Страниц: <span data-th-text="${totalPages}"></span>&nbsp;&nbsp;&nbsp;&nbsp;
         </label>&nbsp;&nbsp;&nbsp;&nbsp;
-        <!-- стрелочка назад -->
-        <a data-th-if="${pageNumber > 1}" data-th-href="@{'/api/receive/updatedFrame/' + ${pageNumber - 1}}">
-            &larr;
-        </a>&nbsp;
-        <label data-th-unless="${pageNumber > 1}">	&larr;</label>&nbsp;
-        <span data-th-each="i : ${#numbers.sequence(1, totalPages)}">
-            <a data-th-if="${i != pageNumber}" data-th-href="@{'/api/receive/updatedFrame/' + ${i}}">[[${i}]]</a>
+        <!-- стрелочки и тд   -->
+        <div data-th-if="pageNumber != -1">
+            <a data-th-if="${pageNumber > 1}"
+               data-th-href="@{'/api/arrange/pagedAndSortedFrames/' + ${pageNumber - 1} + '/'  + ${sortField}}">
+                &larr;
+            </a>&nbsp;
+            <label data-th-unless="${pageNumber > 1}"> &larr;</label>&nbsp;
+            <span data-th-each="i : ${#numbers.sequence(1, totalPages)}">
+            <a data-th-if="${i != pageNumber}"
+               data-th-href="@{'/api/arrange/pagedAndSortedFrames/' + ${i}  + '/' + ${sortField}}">[[${i}]]</a>
             <span data-th-unless="${i != pageNumber}">[[${i}]]</span>
         </span>&nbsp;
-        <!-- стрелочка вперде -->
-        <a data-th-if="${pageNumber < totalPages}" data-th-href="@{'/api/receive/updatedFrame/' + ${pageNumber + 1}}">
-            &rarr;
-        </a>
-        <label data-th-unless="${pageNumber < totalPages}">&rarr;</label>
+            <!-- стрелочка вперде -->
+            <a data-th-if="${pageNumber < totalPages}"
+               data-th-href="@{'/api/arrange/pagedAndSortedFrames/' + ${pageNumber + 1} + '/' + ${sortField}}">
+                &rarr;
+            </a>
+            <label data-th-unless="${pageNumber < totalPages}">&rarr;</label>
+        </div>
+        
 
         <br>
         <br>
@@ -213,27 +200,15 @@
     <br>
     <br>
     <br>
-    <!-- примерчик -->
-    <!--    <label>-->
-    <!--        Всего элементов: <span data-th-text="${totalElements}"></span>-->
-    <!--        Всего страниц: <span data-th-text="${totalPages}"></span>-->
-    <!--        <br>-->
-    <!--    </label>-->
-    <!--    <span data-th-each="i : ${#numbers.sequence(1, totalPages)}">-->
-    <!--  <a data-th-if="${i != pageNumber}" data-th-href="@{'/api/page/' + ${i}}">[[${i}]]</a>-->
-    <!--  <span data-th-unless="${i != pageNumber}">[[${i}]]</span>-->
-    <!--</span>-->
-    <!--    <br>-->
-    <!--    <a data-th-if="${pageNumber > 1}" data-th-href="@{'/api/page/' + ${pageNumber - 1}}">-->
-    <!--        <button>Назад</button>-->
-    <!--    </a>-->
-    <!--    <button data-th-unless="${pageNumber > 1}">Назад</button>-->
+    <!-- Нужны ${поля}: -------- -->
+    <!-- ${errors} -->
+    <!-- ${frames} -->
+    <!-- ${pageNumber} -->
+    <!-- ${totalFrames} -->
+    <!-- ${totalPages} -->
+    <!-- ${} -->
+    <!-- ----------------------- -->
 
-    <!--    <a data-th-if="${pageNumber < totalPages}" data-th-href="@{'/api/page/' + ${pageNumber + 1}}">-->
-    <!--        <button>Вперде</button>-->
-    <!--    </a>-->
-    <!--    <button data-th-unless="${pageNumber < totalPages}">Вперде</button>-->
-    <!-- конец примерчика -->
     <hr>
 
     <!-- очк линзы-->

@@ -2,10 +2,8 @@ package ru.frolov.optica3.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
@@ -23,8 +21,7 @@ import java.util.List;
 @RequestMapping("api/crud")
 public class CrudFramesController {
     /*
-    CrudFramesController выполняет crud операции и
-    перенаправляет в ReceiveFramesController. (Кроме begin(), который сразу отдает оправы представлению).
+    CrudFramesController выполняет crud операции.
 
     - create
     - begin (read)
@@ -32,8 +29,17 @@ public class CrudFramesController {
     - delete
  */
 
+
     private final FrameService frameService;
 
+    //---------------------------need for view---------------------------------------------------- -->
+    // ${errors} -->
+    // ${frames} -->
+    // ${pageNumber} -->
+    // ${totalFrames} -->
+    // ${totalPages} -->
+    // ${} -->
+    // -------------------------------------------------------------------------------------------- -->
 
     // 1.
     @PostMapping("createFrame")
@@ -47,8 +53,14 @@ public class CrudFramesController {
                     .map(ObjectError::getDefaultMessage)
                     .toList();
             ra.addFlashAttribute("errors", errors);
+            ra.addFlashAttribute("framePayload", framePayload);
         } else {
             if (framePayload != null) {
+
+                // если такой объект уже есть
+                // ...
+
+
                 Frame frame = new Frame();
 
                 frame.setFirm(framePayload.firm());
@@ -59,21 +71,36 @@ public class CrudFramesController {
                 this.frameService.save(frame);
             }
         }
-        return "redirect:/api/receive/createdFrame";
+        return "redirect:/api/arrange/pagedAndSortedFrames/%d/%s".formatted(1, Defaults.SORT_FIELD);
     }
+
+    //---------------------------need for view---------------------------------------------------- -->
+    // ${errors} -->
+    // ${frames} -->
+    // ${pageNumber} -->
+    // ${totalFrames} -->
+    // ${totalPages} -->
+    // ${} -->
+    // -------------------------------------------------------------------------------------------- -->
 
     // 2.
-    @GetMapping("read")
-    public String begin(Model model) {
+    @GetMapping("readFrames")
+    public String readFrames() {
 
-        fillModelAttrs(model, Defaults.PAGE_NUMBER, Defaults.PAGE_SIZE, Defaults.SORT_FIELD);
-
-        return "storage";
+        return "redirect:/api/arrange/pagedAndSortedFrames/%d/%s".formatted(1, Defaults.SORT_FIELD);
     }
 
+//---------------------------need for view---------------------------------------------------- -->
+    // ${errors} -->
+    // ${frames} -->
+    // ${pageNumber} -->
+    // ${totalFrames} -->
+    // ${totalPages} -->
+    // ${} -->
+    // -------------------------------------------------------------------------------------------- -->
 
     // 3.
-    @PostMapping("updateFrame/{pageNumber:\\d+}")
+    @PostMapping("updateFrame")
     @Transactional
     public String updateFrame(
             @RequestParam(name = "firm", required = false) String firm,
@@ -85,12 +112,11 @@ public class CrudFramesController {
 
             @RequestParam(name = "whichField") String whichField,
             @RequestParam(name = "id") Long id,
-            @PathVariable(name = "pageNumber", required = false) int pageNumber
+            @RequestParam(name = "pageNumber", required = false) int pageNumber,
+            RedirectAttributes ra
     ) {
 
-//////////////
-        System.out.println("--- in crud updateFrame()...; pageNumber=" + pageNumber);
-//////////////
+
         Frame frame = this.frameService.findById(id).get();
 
         if (whichField.equals("firm") && (!firm.isBlank())) {
@@ -106,30 +132,35 @@ public class CrudFramesController {
         }
         this.frameService.save(frame);
 
-        return "redirect:/api/receive/updatedFrame/".concat(String.valueOf(pageNumber));
+        ra.addFlashAttribute("pageNumber", pageNumber);
+
+        return "redirect:/api/arrange/pagedAndSortedFrames/%d/%s".formatted(1, Defaults.SORT_FIELD);
     }
 
+    //---------------------------need for view---------------------------------------------------- -->
+    // ${errors} -->
+    // ${frames} -->
+    // ${pageNumber} -->
+    // ${totalFrames} -->
+    // ${totalPages} -->
+    // ${} -->
+    // -------------------------------------------------------------------------------------------- -->
 
     // 4.
-    @PostMapping("deleteFrame/{id:\\d+}/{pageNumber:\\d+}")
+    @PostMapping("deleteFrame/{id:\\d+}")
     @Transactional
     public String deleteFrame(
+            RedirectAttributes ra,
             @PathVariable("id") Long id,
-            @PathVariable("pageNumber") int pageNumber
+            @RequestParam("pageNumber") int pageNumber
     ) {
 
         this.frameService.deleteById(id);
 
-        return "redirect:/api/receive/deletedFrame/".concat(String.valueOf(pageNumber));
+        ra.addFlashAttribute("pageNumber", pageNumber);
+
+        return "redirect:/api/arrange/pagedAndSortedFrames/%d/%s".formatted(pageNumber, Defaults.SORT_FIELD);
     }
 
-    // help
-    private void fillModelAttrs(Model model, int pageNumber, int pageSize, String sortField) {
-        Page<Frame> page = this.frameService.getSortedPage(pageNumber, pageSize, sortField);
 
-        model.addAttribute("pageNumber", pageNumber);
-        model.addAttribute("frames", page.getContent());
-        model.addAttribute("totalFrames", page.getTotalElements());
-        model.addAttribute("totalPages", page.getTotalPages());
-    }
 }

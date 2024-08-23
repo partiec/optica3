@@ -1,9 +1,6 @@
 package ru.frolov.optica3.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -39,6 +36,9 @@ public class Frame {
 
     private BigDecimal purchasePrice;
     private BigDecimal salePrice;
+
+    @ManyToOne
+    private IdenticalFramesSet identicalFramesSet;
 
     public Frame(String firm, String model, String details, BigDecimal purchasePrice, BigDecimal salePrice) {
         this.firm = firm;

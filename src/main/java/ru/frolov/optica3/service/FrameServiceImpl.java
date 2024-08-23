@@ -9,7 +9,7 @@ import ru.frolov.optica3.entity.Frame;
 import ru.frolov.optica3.repository.FrameRepository;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,14 +20,10 @@ public class FrameServiceImpl implements FrameService {
     private final FrameRepository frameRepository;
 
     @Override
-    public Iterable<Frame> findAll() {
+    public List<Frame> getList() {
         return new ArrayList<>(this.frameRepository.findAll());
     }
 
-    @Override
-    public Iterable<Frame> findAllByFilter(String filter) {
-        return new ArrayList<>((Collection) this.frameRepository.findAllByFirmContainingIgnoreCase(filter));
-    }
 
     @Override
     public void save(Frame frame) {
@@ -51,13 +47,35 @@ public class FrameServiceImpl implements FrameService {
     }
 
     @Override
-    public List<Frame> sortBy(String field) {
+    public List<Frame> getListSortedBy(String field) {
         return this.frameRepository.findAll(Sort.by(Sort.Direction.DESC, field));
     }
 
     @Override
-    public Page<Frame> getSortedPage(int pageNumber, int size, String field) {
+    public Page<Frame> getPageSortedBy(int pageNumber, int size, String field) {
         return this.frameRepository.findAll(PageRequest.of(pageNumber - 1, size).withSort(Sort.by(Sort.Direction.DESC, field)));
+    }
+
+    @Override
+    public List<Frame> filterResult(String filter) {
+
+        List<Frame> frames = this.frameRepository.findAllByFirmContainingIgnoreCase(filter);
+        frames.addAll(this.frameRepository.findAllByModelContainingIgnoreCase(filter));
+        frames.addAll(this.frameRepository.findAllByDetailsContainingIgnoreCase(filter));
+
+        return Collections.unmodifiableList(frames);
+    }
+
+    @Override
+    public List<Frame> getPageFiltered(List<Frame> total, int pageNumberF, int pageSize) {
+
+        int beginIndex = (pageNumberF - 1) * pageSize;
+        int bortIndex = beginIndex + pageSize;
+
+        return total.stream()
+                .filter(frame -> (total.indexOf(frame) >= beginIndex) && (total.indexOf(frame) < bortIndex))
+                .distinct()
+                .toList();
     }
 
 

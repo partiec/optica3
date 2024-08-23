@@ -9,11 +9,9 @@ import java.math.BigDecimal;
 
 public record FramePayload(
 
-        @NotBlank(message = "Заполни поле 'Фирма'.")
-        @NotEmpty(message = "Поле 'Фирма' не должно быть пустым.")
+        @NotBlank(message = "Заполни 'Фирма'.")
         String firm,
-        @NotBlank(message = "Поле 'Модель' обязательно для заполнения.")
-        @NotEmpty(message = "Can't be empty, bro")
+        @NotBlank(message = "Заполни 'Модель'.")
         String model,
         String details,
         BigDecimal purchasePrice,
