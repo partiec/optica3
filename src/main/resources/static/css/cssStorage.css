@@ -1,14 +1,18 @@
-.sambrero_div h1 {
+
+
+
+/* раньше работало...*/
+.optica h1 {
     background-color: royalblue;
     color: antiquewhite;
     border-radius: 15px;
 }
 
-.sambrero_div h2 {
+.optica h2 {
     color: cornflowerblue;
 }
 
-.leftMenu_div {
+.leftMenu {
     width: 300px;
     background-color: royalblue;
     color: darkturquoise;
@@ -17,7 +21,7 @@
     border: fuchsia;
 }
 
-.entities_div {
+.entities {
     position: relative;
     width: 1400px;
     right: -350px;

@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import ru.frolov.optica3.entity.Frame;
 import ru.frolov.optica3.repository.FrameRepository;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -19,17 +18,12 @@ public class FrameServiceImpl implements FrameService {
 
     private final FrameRepository frameRepository;
 
-    @Override
-    public List<Frame> getList() {
-        return new ArrayList<>(this.frameRepository.findAll());
-    }
-
 
     @Override
-    public void save(Frame frame) {
-        if (frame != null)
-            this.frameRepository.save(frame);
+    public List<Frame> findAll() {
+        return this.frameRepository.findAll();
     }
+
 
     @Override
     public Optional<Frame> findById(Long id) {
@@ -76,6 +70,11 @@ public class FrameServiceImpl implements FrameService {
                 .filter(frame -> (total.indexOf(frame) >= beginIndex) && (total.indexOf(frame) < bortIndex))
                 .distinct()
                 .toList();
+    }
+
+    @Override
+    public void save(Frame newFrame) {
+        this.frameRepository.save(newFrame);
     }
 
 

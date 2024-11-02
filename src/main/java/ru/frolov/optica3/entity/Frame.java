@@ -1,23 +1,18 @@
 package ru.frolov.optica3.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SourceType;
 import org.hibernate.annotations.UpdateTimestamp;
-
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Data
 @AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
 @Builder
 public class Frame {
@@ -34,18 +29,23 @@ public class Frame {
     private String model;
     private String details;
 
-    private BigDecimal purchasePrice;
-    private BigDecimal salePrice;
+    private BigDecimal purchase;
+    private BigDecimal sale;
 
-    @ManyToOne
-    private IdenticalFramesSet identicalFramesSet;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "frameContainer_id")
+    private FrameContainer frameContainer;
 
-    public Frame(String firm, String model, String details, BigDecimal purchasePrice, BigDecimal salePrice) {
+    // constructor needed for creation
+    public Frame(String firm, String model, String details, BigDecimal purchase, BigDecimal sale, FrameContainer frameContainer) {
         this.firm = firm;
         this.model = model;
         this.details = details;
-        this.purchasePrice = purchasePrice;
-        this.salePrice = salePrice;
+        this.purchase = purchase;
+        this.sale = sale;
+        this.frameContainer = frameContainer;
     }
+
+
 }
 
