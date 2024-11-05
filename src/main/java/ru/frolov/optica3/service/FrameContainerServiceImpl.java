@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.frolov.optica3.cache.Cache;
+import ru.frolov.optica3.controller.DisplayController;
 import ru.frolov.optica3.entity.FrameContainer;
 import ru.frolov.optica3.repository.FrameContainerRepository;
 import ru.frolov.optica3.spec.FrameSpec;
@@ -20,17 +21,16 @@ public class FrameContainerServiceImpl implements FrameContainerService {
     private final FrameContainerRepository frameContainerRepository;
 
 
+
     @Override
     public Page<FrameContainer> getPage(Pageable pageable) {
         Cache.setSpecWasUsed(false);
-        System.out.println("//////no spec...");
         return this.frameContainerRepository.findAll(pageable);
     }
 
     @Override
     public Page<FrameContainer> getPage(Specification<FrameContainer> specification, Pageable pageable) {
         Cache.setSpecWasUsed(true);
-        System.out.println("//////with spec...");
         return this.frameContainerRepository.findAll(specification, pageable);
     }
 
@@ -68,6 +68,11 @@ public class FrameContainerServiceImpl implements FrameContainerService {
     @Override
     public void delete(FrameContainer xContainer) {
         this.frameContainerRepository.delete(xContainer);
+    }
+
+    @Override
+    public void deleteById(Long xId) {
+        this.frameContainerRepository.deleteById(xId);
     }
 
 }

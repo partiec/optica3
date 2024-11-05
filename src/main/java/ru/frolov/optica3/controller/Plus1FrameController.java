@@ -5,17 +5,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import ru.frolov.optica3.cache.Cache;
-import ru.frolov.optica3.defaults.Defaults;
 import ru.frolov.optica3.entity.Frame;
 import ru.frolov.optica3.entity.FrameContainer;
-import ru.frolov.optica3.payload.FramePayload;
 import ru.frolov.optica3.service.FrameContainerService;
 import ru.frolov.optica3.service.FrameService;
-import ru.frolov.optica3.spec.FrameSpec;
+
 
 @Controller
 public class Plus1FrameController {
@@ -34,11 +31,9 @@ public class Plus1FrameController {
     @Transactional
     @PostMapping("api/plus1")
     public String plus1(@RequestParam(name = "xId") Long xId,
-                        // Нужна для:
-                        // 1. Отображения текущих значений в поиске.
-                        // 2. Для создания ТАКОЙ ЖЕ страницы по таким же критериям.
-                        FramePayload current,
-                        RedirectAttributes ra) {
+                        @RequestParam(name = "pageNumber") Integer pageNumber) {
+
+        System.out.println("___plus1()...");
 
         // Находим нужный контейнер по полученному id
         final FrameContainer xContainer = this.containerService.findById(xId).get();
@@ -51,19 +46,14 @@ public class Plus1FrameController {
         newFrame.setPurchase(xContainer.getPurchase());
         newFrame.setSale(xContainer.getSale());
 
-        // В оправе указываем ее контейнер, а в контейнере пополняем список оправ вновь созданной оправой
+        // Соединяем xContainer и newFrame
         newFrame.setFrameContainer(xContainer);
         xContainer.addToFrameList(newFrame);
         // сохраняем контейнер и оправу в БД
-        this.frameService.save(newFrame);
+        //this.frameService.save(newFrame);  // надо ли ??????????????????
         this.containerService.save(xContainer);
 
 
-
-
-        Cache.setPayload(current);
-
-
-        return "redirect:/api/display";
+        return "redirect:/api/display/unknownSpec/%d".formatted(pageNumber);
     }
 }

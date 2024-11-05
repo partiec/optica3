@@ -21,11 +21,12 @@
     border: fuchsia;
 }
 
-.entities {
+.search {
     position: relative;
     width: 1400px;
     right: -350px;
     top: -150px;
+
     background-color: azure;
     color: sienna;
 }
@@ -36,11 +37,22 @@
     margin-bottom: 50px;
 }
 
-.frame_table {
+.search_result {
+    position: relative;
+    width: 1400px;
+    right: -350px;
+    top: -150px;
+
     border-spacing: 0;
+    background: azure;
+    color: sienna;
 }
 
 tbody.telo tr:hover {
     background: darkmagenta;
     color: burlywood;
+}
+.currentPage {
+    background: sienna;
+    color: azure;
 }

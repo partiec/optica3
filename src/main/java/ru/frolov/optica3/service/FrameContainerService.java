@@ -30,5 +30,7 @@ public interface FrameContainerService {
     List<FrameContainer> allBySpec(Specification<FrameContainer> frameContainerSpecification);
 
     void delete(FrameContainer xContainer);
+
+    void deleteById(Long xId);
 }
 

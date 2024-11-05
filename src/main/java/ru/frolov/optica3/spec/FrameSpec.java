@@ -8,11 +8,11 @@ import java.math.BigDecimal;
 public class FrameSpec {
 
 
-    public static Specification<FrameContainer> allFieldsContains(String firm,
-                                                                  String model,
-                                                                  String details,
-                                                                  BigDecimal purchase,
-                                                                  BigDecimal sale) {
+    public static Specification<FrameContainer> byAllFieldsContains(String firm,
+                                                                    String model,
+                                                                    String details,
+                                                                    BigDecimal purchase,
+                                                                    BigDecimal sale) {
         return Specification.where(FrameSpec.firmContains(firm)
                 .and(FrameSpec.modelContains(model))
                 .and(FrameSpec.detailsContains(details))

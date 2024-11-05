@@ -3,19 +3,31 @@ package ru.frolov.optica3.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-
+import org.springframework.web.bind.annotation.PostMapping;
+import ru.frolov.optica3.cache.Cache;
+import ru.frolov.optica3.payload.FiltersPayload;
 
 
 @Controller
-@RequestMapping("api/start")
 public class StartController {
 
-    @GetMapping
+    @GetMapping("api/start")
     public String start() {
 
+        System.out.println("---start()...");
 
-        return "redirect:/api/allFrames/0";
+        Cache.setFiltersPayload(new FiltersPayload(null, null, null, null, null));
+
+        return "redirect:/api/display/noSpec/0";
+    }
+
+    @PostMapping("api/start")
+    public String startPostRequest() {
+
+        System.out.println("---startPostRequest()...");
+
+        Cache.setFiltersPayload(new FiltersPayload(null, null, null, null, null));
+
+        return "redirect:/api/display/noSpec/0";
     }
 }

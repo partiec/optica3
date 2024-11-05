@@ -35,10 +35,9 @@ public class Minus1FrameController {
     @Transactional
     @PostMapping("api/minus1")
     public String minus1(@RequestParam(name = "xId") Long xId,
-                         // Нужна для:
-                         // 1. Отображения текущих значений в поиске.
-                         // 2. Для создания ТАКОЙ ЖЕ страницы по таким же критериям.
-                         FramePayload current) {
+                         @RequestParam(name = "pageNumber") Integer pageNumber) {
+
+        System.out.println("___minus1()...");
 
         // Находим нужный контейнер по полученному id
         FrameContainer xContainer = this.containerService.findById(xId).get();
@@ -55,31 +54,6 @@ public class Minus1FrameController {
             this.containerService.save(xContainer);
         }
 
-        // нужна та же page, но с учетом вновь созданного продукта
-        //--------------------------------------------------------
-        // номер страницы берем из кэша
-        int beforePageNumber = Cache.getPage().getNumber();
-
-        // создаем page  в зависимости от Cache.isUseSpec()
-        Page<FrameContainer> page;
-        Pageable pageable = PageRequest.of(beforePageNumber, Defaults.PAGE_SIZE);
-        if (Cache.specWasUsed()) {
-
-            page = this.containerService.getPage(FrameSpec.allFieldsContains(
-                            current.firm(),
-                            current.model(),
-                            current.details(),
-                            current.purchase(),
-                            current.sale()),
-                    pageable);
-        } else {
-            page = this.containerService.getPage(pageable);
-        }
-
-        Cache.setPage(page);
-        Cache.setPayload(current);
-
-
-        return "redirect:/api/display";
+        return "redirect:/api/display/unknownSpec/%d".formatted(pageNumber);
     }
 }

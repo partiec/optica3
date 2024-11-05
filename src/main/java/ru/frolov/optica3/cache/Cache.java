@@ -1,39 +1,36 @@
 package ru.frolov.optica3.cache;
 
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
-import ru.frolov.optica3.entity.FrameContainer;
+import ru.frolov.optica3.payload.FiltersPayload;
 import ru.frolov.optica3.payload.FramePayload;
 
 @Component
 public class Cache {
 
-    private static Page<FrameContainer> page;
     private static FramePayload framePayload;
-    private static boolean useSpec;
+    private static FiltersPayload filtersPayload;
+    private static boolean specWasUsed;
 
-
-    public static Page<FrameContainer> getPage() {
-        return page;
-    }
-
-    public static FramePayload getPayload() {
+    public static FramePayload getFramePayload() {
         return framePayload;
     }
 
-    public static void setPage(Page<FrameContainer> pageForCache) {
-        page = pageForCache;
+    public static void setFramePayload(FramePayload payload) {
+        framePayload = payload;
+    }
+    public static FiltersPayload getFiltersPayload() {
+        return filtersPayload;
     }
 
-    public static void setPayload(FramePayload payloadForCache) {
-        framePayload = payloadForCache;
+    public static void setFiltersPayload(FiltersPayload payload) {
+        filtersPayload = payload;
     }
 
-    public static boolean specWasUsed() {
-        return useSpec;
+    public static boolean isSpecWasUsed() {
+        return specWasUsed;
     }
 
-    public static void setSpecWasUsed(boolean useSpec) {
-        Cache.useSpec = useSpec;
+    public static void setSpecWasUsed(boolean wasSpecUsed) {
+        specWasUsed = wasSpecUsed;
     }
 }

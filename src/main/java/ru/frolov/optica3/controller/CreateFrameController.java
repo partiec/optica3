@@ -3,17 +3,17 @@ package ru.frolov.optica3.controller;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.frolov.optica3.cache.Cache;
 import ru.frolov.optica3.defaults.Defaults;
 import ru.frolov.optica3.entity.Frame;
 import ru.frolov.optica3.entity.FrameContainer;
-import ru.frolov.optica3.payload.FramePayload;
+import ru.frolov.optica3.payload.FiltersPayload;
 import ru.frolov.optica3.service.FrameContainerService;
 import ru.frolov.optica3.service.FrameService;
-
-import java.util.List;
 
 @Controller
 public class CreateFrameController {
@@ -28,54 +28,74 @@ public class CreateFrameController {
     //------------------------------------------------------------------------------------------------------------
 
     @PostMapping("api/createFrame")
-    public String createFrame(FramePayload payload) {
+    public String createFrame(FiltersPayload filters,
+                              RedirectAttributes ra) {
 
+        System.out.println("___createFrame()...");
 
         // создать new frame
         Frame newFrame = new Frame();
-        newFrame.setFirm(payload.firm());
-        newFrame.setModel(payload.model());
-        newFrame.setDetails(payload.details());
-        newFrame.setPurchase(payload.purchase());
-        newFrame.setSale(payload.sale());
+        newFrame.setFirm(filters.firm());
+        newFrame.setModel(filters.model());
+        newFrame.setDetails(filters.details());
+        newFrame.setPurchase(filters.purchase());
+        newFrame.setSale(filters.sale());
         // создать новый контейнер
         FrameContainer xContainer = new FrameContainer();
-        xContainer.setFirm(payload.firm());
-        xContainer.setModel(payload.model());
-        xContainer.setDetails(payload.details());
-        xContainer.setPurchase(payload.purchase());
-        xContainer.setSale(payload.sale());
+        xContainer.setFirm(filters.firm());
+        xContainer.setModel(filters.model());
+        xContainer.setDetails(filters.details());
+        xContainer.setPurchase(filters.purchase());
+        xContainer.setSale(filters.sale());
 
-        // установить, что новая оправа принадлежит новому контейнеру
+        // связь newFrame и xContainer
         newFrame.setFrameContainer(xContainer);
-        // добавить новую оправу в список
         xContainer.addToFrameList(newFrame);
         // сохранить контейнер
         this.containerService.save(xContainer);
 
-        // после создания надо отобразить страницу, содержащую вновь созданный контейнер (без spec)
-        List<FrameContainer> content = this.containerService.all();
-        int totalPages = content.size() / Defaults.PAGE_SIZE + 1;
+        // для display нужен номер страницы, содержащей xContainer
+        //------------------------------------------------------------
         Page<FrameContainer> xPage = null;
+        int xPageNumber;
+
         boolean catchXPage = false;
-        for (int i = 0; i < totalPages; i++) {
-            // Создать страницу номер i
-            Pageable xPageable = PageRequest.of(i, Defaults.PAGE_SIZE);
-            xPage = this.containerService.getPage(xPageable);
+
+        // перебираем страницы, пока не найдем нужную
+        for (int i = 0; ; i++) {
+
+            System.out.println("...итерация № " + i);
+
+            // если нужная страница найдена, выходим из цикла
+            if (catchXPage) break;
+
+            // На каждой итерации создать страницу номер i
+            Pageable pageable = PageRequest.of(
+                    i,
+                    Defaults.PAGE_SIZE,
+                    Sort.by(Sort.Direction.ASC, "firm"));
+            xPage = this.containerService.getPage(pageable);
+            System.out.println("...создана xPage № " + xPage.getNumber());
 
             // перебирать content каждой страницы пока не найдем содержащую xContainer
-            for (FrameContainer x : xPage.getContent()) {
-                if (x == xContainer) {
+            for (FrameContainer container : xPage.getContent()) {
+                // если нашелся xContainer, то найдена нужная страница
+                if (container.equals(xContainer)) {
+                    System.out.println("...контейнер найден...итерация все еще № " + i + "  ?????????????");
                     catchXPage = true;
                     break;
                 }
             }
-            if (catchXPage) break;
         }
 
-        Cache.setPage(xPage);
+        xPageNumber = xPage.getNumber();
+        System.out.println("///noSpec/" + xPageNumber);
 
+        ra.addFlashAttribute("xId", xContainer.getId());
 
-        return "redirect:/api/display";
+        // после create поля для НАЙТИ/СОЗДАТЬ уже не нужны
+        Cache.setFiltersPayload(new FiltersPayload(null,null,null,null,null));
+
+        return "redirect:/api/display/noSpec/%d".formatted(xPageNumber);
     }
 }
