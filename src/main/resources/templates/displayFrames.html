@@ -23,11 +23,11 @@
     </h2>
     <hr>
 
-    <!-- НАЙТИ/СОЗДАТЬ -->
-    <!-- >>>>>>>>>>>>> в searchFrames:      whichFieldOnInput,  -->
-    <!--                                    firm, model, details, purchase, sale -->
-    <!-- надо для отображения:      whichFieldOnInput,     -->
-    <!--                            firm, model, details, purchase, sale -->
+    <!-- form НАЙТИ/СОЗДАТЬ -->
+    <!-- отсылает:      whichFieldOnInput,  -->
+    <!--                firm, model, details, purchase, sale -->
+    <!-- принимает:      whichFieldOnInput,     -->
+    <!--                 firm, model, details, purchase, sale -->
     <form method="post" data-th-action="@{/api/searchFrames}">
         <input id="whichFieldOnInput_id" type="hidden" name="whichFieldOnInput">
         <span>Начните вводить, чтобы НАЙТИ или СОЗДАТЬ НОВЫЙ ТОВАР:</span>&nbsp;
@@ -113,7 +113,6 @@
 </div>
 <br>
 <div class="search_result">
-    <span>Результат поиска</span>
     <hr>
 
 
@@ -147,8 +146,7 @@
             <!-- tr for_each -------|-----|-----|-----|-----|--------------------------- -->
             <tr class="frame_row" data-th-each="container : ${page.getContent()}">
 
-                <!-- № -->
-                <!-- (containerStat.count - начинается с 1, containerStat.index - начинается с 0) -->
+                <!-- № и галочка-->
                 <td>
                     <span data-th-if="${container.id == xId}" data-th-text="${containerStat.count} +  ' &#10004;'"></span>
                     <span data-th-unless="${container.id == xId}" data-th-text="${containerStat.count} + '  '"></span>
@@ -233,7 +231,7 @@
 
                 <!-- Удалить позицию-->
                 <td>
-                    <form method="post" data-th-action="@{/api/delete}">
+                    <form method="post" data-th-action="@{/api/deletePosition}">
                         <input type="hidden" name="xId" data-th-value="${container.id}">
                         <input type="hidden" name="currentPageNumber" data-th-value="${pageNumber}">
                         <input type="submit" value="Удалить позицию">
@@ -257,7 +255,8 @@
             Страницa <span data-th-text="${page.getNumber() + 1}"></span> (из <span
                 data-th-text="${page.getTotalPages()}"></span>)&nbsp;&nbsp;&nbsp;&nbsp;
             Позиций: <span data-th-text="${page.getTotalElements()}"></span>&nbsp;&nbsp;&nbsp;&nbsp;
-            Единиц товара: <span data-th-text="${totalFrames}"></span>
+            Единиц товара: <span data-th-text="${frames}"></span>&nbsp;
+            <span data-th-if="${frames == totalFrames}">(Это полный список)</span>
         </label>&nbsp;&nbsp;&nbsp;&nbsp;
 
         <!-- <- 1 2 3 4 5 -> -->

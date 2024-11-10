@@ -1,10 +1,15 @@
 package ru.frolov.optica3.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.frolov.optica3.cache.Cache;
@@ -28,10 +33,13 @@ public class CreateFrameController {
     //------------------------------------------------------------------------------------------------------------
 
     @PostMapping("api/createFrame")
-    public String createFrame(FiltersPayload filters,
-                              RedirectAttributes ra) {
+    public String createFrame(@Valid FiltersPayload filters,
+                              RedirectAttributes ra,
+                              BindingResult bindingResult) {
 
         System.out.println("___createFrame()...");
+        System.out.println("...bindingResult no errors...");
+
 
         // создать new frame
         Frame newFrame = new Frame();
@@ -48,40 +56,66 @@ public class CreateFrameController {
         xContainer.setPurchase(filters.purchase());
         xContainer.setSale(filters.sale());
 
-        // связь newFrame и xContainer
+        // связать newFrame и xContainer
         newFrame.setFrameContainer(xContainer);
         xContainer.addToFrameList(newFrame);
-        // сохранить контейнер
+        // сохранить контейнер (newFrame сохранится каскадно)
         this.containerService.save(xContainer);
 
-        // для display нужен номер страницы, содержащей xContainer
+        // вычислить номер страницы, в которой xContainer
+        int xPageNumber = evaluateXPageNumber(xContainer);
+
+        ra.addFlashAttribute("xId", xContainer.getId());
+
+        // поля НАЙТИ/СОЗДАТЬ отобразятся пустыми
+        Cache.setFiltersPayload(new FiltersPayload(null, null, null, null, null));
+
+        return "redirect:/api/display/noSpec/%d".formatted(xPageNumber);
+
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public String handleErrors(MethodArgumentNotValidException notValidException,
+                               RedirectAttributes ra,
+                               BindingResult br){
+
+        System.out.println("...@ExceptionHandler...");
+
+        ra.addFlashAttribute("errors", br.getAllErrors().stream().map(ObjectError::getDefaultMessage).toList());
+
+        return "redirect:/api/display/noSpec/0";
+    }
+
+
+    private int evaluateXPageNumber(FrameContainer xContainer) {
+        // В display нужно будет отобразить страницу с xContainer. Высчитываем номер этой страницы
         //------------------------------------------------------------
         Page<FrameContainer> xPage = null;
+        // номер страницы, содержащей xContainer
         int xPageNumber;
 
+        // найдена ли нужная страница
         boolean catchXPage = false;
 
         // перебираем страницы, пока не найдем нужную
         for (int i = 0; ; i++) {
 
-            System.out.println("...итерация № " + i);
-
             // если нужная страница найдена, выходим из цикла
             if (catchXPage) break;
 
-            // На каждой итерации создать страницу номер i
+            // На каждой итерации создать:
+            //  pageable i
             Pageable pageable = PageRequest.of(
                     i,
                     Defaults.PAGE_SIZE,
                     Sort.by(Sort.Direction.ASC, "firm"));
+            // страницу i
             xPage = this.containerService.getPage(pageable);
-            System.out.println("...создана xPage № " + xPage.getNumber());
 
-            // перебирать content каждой страницы пока не найдем содержащую xContainer
+            // перебирать content каждой страницы пока не найдем страницу, содержащую xContainer
             for (FrameContainer container : xPage.getContent()) {
                 // если нашелся xContainer, то найдена нужная страница
                 if (container.equals(xContainer)) {
-                    System.out.println("...контейнер найден...итерация все еще № " + i + "  ?????????????");
                     catchXPage = true;
                     break;
                 }
@@ -89,13 +123,8 @@ public class CreateFrameController {
         }
 
         xPageNumber = xPage.getNumber();
-        System.out.println("///noSpec/" + xPageNumber);
-
-        ra.addFlashAttribute("xId", xContainer.getId());
-
-        // после create поля для НАЙТИ/СОЗДАТЬ уже не нужны
-        Cache.setFiltersPayload(new FiltersPayload(null,null,null,null,null));
-
-        return "redirect:/api/display/noSpec/%d".formatted(xPageNumber);
+        return xPageNumber;
     }
+
+
 }

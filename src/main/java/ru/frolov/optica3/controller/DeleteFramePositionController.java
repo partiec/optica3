@@ -26,7 +26,7 @@ public class DeleteFramePositionController {
 //-----------------------------------------------------------------------------------------------
 
     @Transactional
-    @PostMapping("api/delete")
+    @PostMapping("api/deletePosition")
     public String deletePosition(@RequestParam(name = "xId") Long xId,
                                  @RequestParam(name = "currentPageNumber") Integer currentPageNumber,
                                  // Нужна для:

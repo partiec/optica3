@@ -28,7 +28,10 @@ public class DisplayController {
 
     private final FrameContainerService containerService;
 
-
+    // при createFrame нужно:
+    //      filters - нужны. По ним создается новый контейнер
+    // при deletePosition нужно:
+    //
     //-----------------------------------------------------------------------------------------
 
 
@@ -44,39 +47,52 @@ public class DisplayController {
 
         // Need:
         Page<FrameContainer> page = null;
+
         Pageable pageable = PageRequest.of(
                 pageNumber,
                 Defaults.PAGE_SIZE,
                 Sort.by(Sort.Direction.ASC, "firm"));
+
         Specification<FrameContainer> spec;
-        // список всех контейнеров (потом переберем для определения количества единиц товара)
-        List<FrameContainer> totalContainers = new ArrayList<>();
-        // единиц товара
+
+        // вычислить сколько ВСЕГО ОПРАВ в БД, перебрав все контейнеры и сосчитав оправы в каждом
         long totalFrames = 0;
+        for (FrameContainer c : this.containerService.all()) {
+            totalFrames += c.getFrameList().size();
+        }
+
+        // список всех контейнеров (потом переберем для определения количества единиц товара при bySpec)
+        List<FrameContainer> containers = new ArrayList<>();
+
         FiltersPayload filters = Cache.getFiltersPayload();
 
+        // единиц товара
+        long frames = 0;
 
+        if (specRequirement.equals("noSpec") || !Cache.isSpecWasUsed()) {
+
+            page = this.containerService.getPage(pageable);
+
+            // нашлись ВСЕ КОНТЕЙНЕРЫ И ВСЕ ОПРАВЫ
+            frames = totalFrames;
+        }
         if (specRequirement.equals("bySpec") || Cache.isSpecWasUsed()) {
 
             spec = FrameSpec.byAllFieldsContains(filters.firm(), filters.model(), filters.details(), filters.purchase(), filters.sale());
             page = this.containerService.getPage(
                     spec,
                     pageable);
-            totalContainers = this.containerService.allBySpec(spec);
-        }
-        else if (specRequirement.equals("noSpec") || !Cache.isSpecWasUsed()) {
+            // нашлись НЕ ВСЕ КОНТЕЙНЕРЫ
+            containers = this.containerService.allBySpec(spec);
 
-            page = this.containerService.getPage(pageable);
-            totalContainers = this.containerService.all();
+            // вычислить сколько оправ, перебрав найденные контейнеры и сосчитав оправы в каждом
+            for (FrameContainer c : containers) {
+                frames += c.getFrameList().size();
+            }
         }
-
-        // вычислить totalFrames, перебрав все контейнеры и сосчитав оправы в каждом
-        for (FrameContainer container : totalContainers) {
-            totalFrames += container.getFrameList().size();
-        }
-
 
         model.addAttribute("page", page);
+        model.addAttribute("frames", frames);
         model.addAttribute("totalFrames", totalFrames);
         model.addAttribute("filters", filters);
 
