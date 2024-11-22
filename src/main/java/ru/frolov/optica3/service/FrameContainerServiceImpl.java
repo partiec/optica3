@@ -5,11 +5,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import ru.frolov.optica3.cache.Cache;
-import ru.frolov.optica3.controller.DisplayController;
-import ru.frolov.optica3.entity.FrameContainer;
+import ru.frolov.optica3.entity.frame.FrameContainer;
 import ru.frolov.optica3.repository.FrameContainerRepository;
-import ru.frolov.optica3.spec.FrameSpec;
+import ru.frolov.optica3.spec.SpecForFrames;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,24 +22,22 @@ public class FrameContainerServiceImpl implements FrameContainerService {
 
     @Override
     public Page<FrameContainer> getPage(Pageable pageable) {
-        Cache.setSpecWasUsed(false);
         return this.frameContainerRepository.findAll(pageable);
     }
 
     @Override
     public Page<FrameContainer> getPage(Specification<FrameContainer> specification, Pageable pageable) {
-        Cache.setSpecWasUsed(true);
         return this.frameContainerRepository.findAll(specification, pageable);
     }
 
     @Override
-    public FrameContainer alreadyExists(String firm, String model) {
-        Specification<FrameContainer> spec = Specification.where(FrameSpec.firmLike(firm)).and(FrameSpec.modelLike(model));
+    public FrameContainer findSame(String firm, String model) {
+        Specification<FrameContainer> spec = Specification.where(SpecForFrames.firmLike(firm)).and(SpecForFrames.modelLike(model));
         FrameContainer result = this.frameContainerRepository.findAll(spec).stream()
                 .findFirst()
                 .orElse(null);
         System.out.println("___findSame()...");
-        System.out.println("///FrameContainer result = " + result);
+        System.out.println("///same = " + result);
         return result;
     }
 
@@ -74,5 +70,8 @@ public class FrameContainerServiceImpl implements FrameContainerService {
     public void deleteById(Long xId) {
         this.frameContainerRepository.deleteById(xId);
     }
+
+
+    //-----------------------------------
 
 }

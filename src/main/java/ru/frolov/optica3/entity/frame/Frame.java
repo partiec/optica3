@@ -1,10 +1,12 @@
-package ru.frolov.optica3.entity;
+package ru.frolov.optica3.entity.frame;
 
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SourceType;
 import org.hibernate.annotations.UpdateTimestamp;
+import ru.frolov.optica3.enums.enums_for_frames.FrameInstallType;
+import ru.frolov.optica3.enums.enums_for_frames.FrameMaterial;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -27,6 +29,13 @@ public class Frame {
 
     private String firm;
     private String model;
+    ////////////////////////
+    @Enumerated(EnumType.STRING)
+    private FrameInstallType frameInstallType;
+
+    @Enumerated(EnumType.STRING)
+    private FrameMaterial frameMaterial;
+    ////////////////////////
     private String details;
 
     private BigDecimal purchase;

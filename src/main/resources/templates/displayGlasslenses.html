@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>Glass lenses</title>
+    <link rel="stylesheet" data-th-href="@{/css/cssGlasslens.css}">
+    <script src="js/jsGlasslens.js"></script>
+</head>
+<body>
+
+<!-- fragment 'optica' from fragments.html -->
+<div data-th-insert="~{fragments :: optica}" class="optica"></div>
+
+<!-- fragment 'left_menu' from fragments.html -->
+<div data-th-insert="~{fragments :: left_menu}" class="leftMenu"></div>
+
+
+<!-- search-->
+<div class="search">
+
+    <h2>
+        Оправы:
+    </h2>
+    <hr>
+
+    <!-- form НАЙТИ/СОЗДАТЬ -->
+    <!-- отсылает:      whichFieldOnInput,  -->
+    <!--                firm, model, details, purchase, sale -->
+    <!-- принимает:      whichFieldOnInput,     -->
+    <!--                 firm, model, details, purchase, sale -->
+    <form method="post" data-th-action="@{/api/searchFrames}">
+        <input id="whichFieldOnInput_id" type="hidden" name="whichFieldOnInput">
+        <span>Начните вводить, чтобы НАЙТИ или СОЗДАТЬ НОВЫЙ ТОВАР:</span>&nbsp;
+        <!-- |Весь список| -->
+        <button type="submit" formaction="/api/start">Показать все</button>
+
+        <table>
+            <tbody>
+            <tr>
+                <td>
+                    <!-- |Фирма|  -->
+                    <input data-th-if="${whichFieldOnInput == 'firm'} " autofocus
+                           onfocus="this.selectionStart = this.selectionEnd = this.value.length"
+                           oninput="document.getElementById('whichFieldOnInput_id').value='firm';this.form.submit();"
+                           type="text" placeholder="Фирма*"
+                           name="firm" data-th-value="${filters.firm}">
+                    <input data-th-unless="${whichFieldOnInput == 'firm'}"
+                           onfocus="this.selectionStart = this.selectionEnd = this.value.length"
+                           oninput="document.getElementById('whichFieldOnInput_id').value='firm';this.form.submit();"
+                           type="text" placeholder="Фирма*"
+                           name="firm" data-th-value="${filters.firm}">
+                </td>
+                <td>
+                    <!-- |Модель| -->
+                    <input data-th-if="${whichFieldOnInput == 'model'}" autofocus
+                           onfocus="this.selectionStart = this.selectionEnd = this.value.length"
+                           oninput=" document.getElementById('whichFieldOnInput_id').value='model'; this.form.submit();"
+                           type="text" placeholder="Модель*"
+                           name="model" data-th-value="${filters.model}">
+                    <input data-th-unless="${whichFieldOnInput == 'model'}"
+                           onfocus="this.selectionStart = this.selectionEnd = this.value.length"
+                           oninput="document.getElementById('whichFieldOnInput_id').value='model'; this.form.submit();"
+                           type="text" placeholder="Модель*"
+                           name="model" data-th-value="${filters.model}">
+                </td>
+                <td>
+                    <!-- |Описание| -->
+                    <input data-th-if="${whichFieldOnInput == 'details'}" autofocus
+                           onfocus="this.selectionStart = this.selectionEnd = this.value.length"
+                           oninput=" document.getElementById('whichFieldOnInput_id').value='details'; this.form.submit();"
+                           type="text" placeholder="Описание"
+                           name="details" data-th-value="${filters.details}">
+                    <input data-th-unless="${whichFieldOnInput == 'details'}"
+                           onfocus="this.selectionStart = this.selectionEnd = this.value.length"
+                           oninput=" document.getElementById('whichFieldOnInput_id').value='details'; this.form.submit();"
+                           type="text" placeholder="Описание"
+                           name="details" data-th-value="${filters.details}">
+                </td>
+                <!-- framePurchase -->
+                <td>
+                    <input type="number" placeholder="Закупка (руб.)"
+                           name="purchase" data-th-value="${filters.purchase}">
+                </td>
+                <!-- frameSale -->
+                <td>
+                    <input type="number" placeholder="Продажа (руб.)"
+                           name="sale" data-th-value="${filters.sale}">
+                </td>
+                <td>
+                    <input type="submit" value="Поиск">
+                </td>
+                <td>
+                    <button type="submit" formaction="/api/start">Очистить</button>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" >
+                    <button type="submit" formaction="/api/createFrame">Создать по введенным данным</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+    </form>
+
+
+    <div data-th-if="${errors}">
+        <ul>
+            <li data-th-each="err : ${errors}" data-th-text="${err}">Ош...ка!</li>
+        </ul>
+    </div>
+
+</div>
+<br>
+<div class="search_result">
+    <hr>
+
+
+    <div class="dto_div">
+
+        <!-- -------------------------------------------------------------------------------------- -->
+        <!-- -------------------------------------------------------------------------------------- -->
+        <!-- -------------------------------------------------------------------------------------- -->
+        <!-- -------------------------------------------------------------------------------------- -->
+        <!-- -------------------------------------------------------------------------------------- -->
+
+        <table class="frame_table">
+            <thead>
+            <tr>
+                <th>№</th>
+                <th>Фирма</th>
+                <th>Модель</th>
+                <th>Описание</th>
+                <th>Закупка</th>
+                <th>Розница</th>
+                <th>Количество (шт.)</th>
+                <th><!-- +1 --></th>
+                <th><!-- -1 --></th>
+                <th><!-- Удалить позицию --></th>
+                <th><!-- В ЗАКАЗ --></th>
+            </tr>
+            </thead>
+            <tbody class="telo">
+
+
+            <!-- tr for_each -------|-----|-----|-----|-----|--------------------------- -->
+            <tr class="frame_row" data-th-each="container : ${page.getContent()}">
+
+                <!-- № и галочка-->
+                <td>
+                    <span data-th-if="${container.id == xId}" data-th-text="${containerStat.count} +  ' &#10004;'"></span>
+                    <span data-th-unless="${container.id == xId}" data-th-text="${containerStat.count} + '  '"></span>
+                </td>
+
+                <td><!-- firm -->
+                    <form method="post" data-th-action="@{/api/updateFrame}">
+                        <input onblur=this.form.submit()
+                               type="text"
+                               data-th-name="firm"
+                               data-th-value="${container.firm}">
+                        <input type="hidden" name="xId" data-th-value="${container.id}">
+                        <input type="hidden" name="pageNumber" data-th-value="${pageNumber}">
+                    </form>
+                </td>
+
+                <td><!-- model -->
+                    <form method="post" data-th-action="@{/api/updateFrame}">
+                        <input onblur=this.form.submit()
+                               type="text"
+                               data-th-name="model"
+                               data-th-value="${container.model}">
+                        <input type="hidden" name="xId" data-th-value="${container.id}">
+                        <input type="hidden" name="pageNumber" data-th-value="${pageNumber}">
+                    </form>
+                </td>
+
+                <td><!-- details -->
+                    <form method="post" data-th-action="@{/api/updateFrame}">
+                        <input onblur=this.form.submit()
+                               type="text"
+                               data-th-name="details"
+                               data-th-value="${container.details}">
+                        <input type="hidden" name="xId" data-th-value="${container.id}">
+                        <input type="hidden" name="pageNumber" data-th-value="${pageNumber}">
+                    </form>
+                </td>
+
+                <td><!-- purchase -->
+                    <form method="post" data-th-action="@{/api/updateFrame}">
+                        <input onblur=this.form.submit()
+                               type="number"
+                               data-th-name="purchasePrice"
+                               data-th-value="${container.purchase}">
+                        <input type="hidden" name="xId" data-th-value="${container.id}">
+                        <input type="hidden" name="pageNumber" data-th-value="${pageNumber}">
+                    </form>
+                </td>
+
+                <td><!-- sale -->
+                    <form method="post" data-th-action="@{/api/updateFrame}">
+                        <input onblur=this.form.submit()
+                               type="number"
+                               data-th-name="salePrice"
+                               data-th-value="${container.sale}">
+                        <input type="hidden" name="xId" data-th-value="${container.id}">
+                        <input type="hidden" name="pageNumber" data-th-value="${pageNumber}">
+                    </form>
+                </td>
+
+                <td align="center"><!-- Колличество (шт.) -->
+                    <span data-th-text="${#lists.size(container.frameList)}"></span>
+                </td>
+
+                <!-- +1 -->
+                <td>
+                    <form method="post" data-th-action="@{/api/plus1}">
+                        <input type="hidden" name="xId" data-th-value="${container.id}">
+                        <input type="hidden" name="pageNumber" data-th-value="${pageNumber}">
+                        <input type="submit" value="+1">
+                    </form>
+                </td>
+
+                <!-- -1 -->
+                <td>
+                    <form method="post" data-th-action="@{/api/minus1}">
+                        <input type="hidden" name="xId" data-th-value="${container.id}">
+                        <input type="hidden" name="pageNumber" data-th-value="${pageNumber}">
+                        <input type="submit" value="-1">
+                    </form>
+                </td>
+
+                <!-- Удалить позицию-->
+                <td>
+                    <form method="post" data-th-action="@{/api/deletePosition}">
+                        <input type="hidden" name="xId" data-th-value="${container.id}">
+                        <input type="submit" value="Удалить позицию">
+                    </form>
+                </td>
+
+                <!-- В ЗАКАЗ -->
+                <td>
+                    <form method="post" data-th-action="@{/api/deleteFrame/{id}(id=${container.id})}">
+                        <input type="submit" value="В ЗАКАЗ">
+                    </form>
+                </td>
+
+            </tr>
+            </tbody>
+        </table>
+
+        <br>
+        <!-- info -->
+        <label>
+            <span data-th-if="${message_itsFullList}">Полный список товаров -  </span>&nbsp;&nbsp;
+            <span data-th-unless="${message_itsFullList}">Найдено по запросу -  </span>&nbsp;&nbsp;
+            <span data-th-if="${page.getTotalPages() > 0}">Страницa <span data-th-text="${page.getNumber() + 1}"></span> (из <span data-th-text="${page.getTotalPages()}"></span>)</span>&nbsp;&nbsp;&nbsp;&nbsp;
+            <span data-th-unless="${page.getTotalPages() > 0}">НЕТ СОВПАДЕНИЙ</span>&nbsp;&nbsp;&nbsp;&nbsp;
+            позиций: <span data-th-text="${foundFramePositions}"></span> (из <span data-th-text="${dbFramePositions}"></span>) &nbsp;&nbsp;&nbsp;&nbsp;
+            единиц товара: <span data-th-text="${foundFrameUnits}"></span> (из <span data-th-text="${dbFrameUnits}"></span>) &nbsp;
+        </label>&nbsp;&nbsp;&nbsp;&nbsp;
+
+        <!-- <- 1 2 3 4 5 -> -->
+        <!-- имеет ли смысл вообще показывать про страницы -->
+        <div data-th-if="${foundFramePositions} > 0">
+
+            <!-- Назад    -->
+            <a data-th-if="${page.getNumber() > 0}"
+               data-th-href="@{'/api/flipFramePage/' + ${page.getNumber() - 1}}">&#9668;</a>&nbsp;
+            <label data-th-unless="${page.getNumber() > 0}">&#9668;</label>&nbsp;
+
+            <!-- Цифры    -->
+            <span data-th-each="i : ${#numbers.sequence(0, page.getTotalPages() - 1)}">
+                <a data-th-if="${i != page.getNumber()}"
+                   data-th-href="@{'/api/flipFramePage/' + ${i}}">[[${i + 1}]]</a>
+                <span data-th-unless="${i != page.getNumber()}" class="currentPage">[[${i + 1}]]</span>
+            </span>&nbsp;
+
+            <!--  Вперед -->
+            <a data-th-if="${page.getNumber() < (page.getTotalPages() - 1)}"
+               data-th-href="@{'/api/flipFramePage/' + ${page.getNumber() + 1} }">&#9658;</a>
+            <label data-th-unless="${page.getNumber() < (page.getTotalPages() - 1)}">&#9658;</label>
+        </div>
+    </div>
+</div>
+<br>
+<br>
+<br>
+
+<hr>
+
+
+<hr>
+
+
+</body>
+</html>
+

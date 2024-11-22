@@ -1,7 +1,9 @@
-package ru.frolov.optica3.entity;
+package ru.frolov.optica3.entity.frame;
 
 import jakarta.persistence.*;
 import lombok.*;
+import ru.frolov.optica3.enums.enums_for_frames.FrameInstallType;
+import ru.frolov.optica3.enums.enums_for_frames.FrameMaterial;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -21,6 +23,13 @@ public class FrameContainer {
 
     private String firm;
     private String model;
+    ////////////////////////
+    @Enumerated(EnumType.STRING)
+    private FrameInstallType frameInstallType;
+
+    @Enumerated(EnumType.STRING)
+    private FrameMaterial frameMaterial;
+    ////////////////////////
     private String details;
 
     private BigDecimal purchase;

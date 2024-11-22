@@ -3,7 +3,9 @@ package ru.frolov.optica3.meta;
 
 import jakarta.persistence.metamodel.SingularAttribute;
 import jakarta.persistence.metamodel.StaticMetamodel;
-import ru.frolov.optica3.entity.FrameContainer;
+import ru.frolov.optica3.entity.frame.FrameContainer;
+import ru.frolov.optica3.enums.enums_for_frames.FrameInstallType;
+import ru.frolov.optica3.enums.enums_for_frames.FrameMaterial;
 
 import javax.annotation.processing.Generated;
 import java.math.BigDecimal;
@@ -15,6 +17,8 @@ public abstract class FrameContainer_ {
     public static volatile SingularAttribute<FrameContainer, Long> id;
     public static volatile SingularAttribute<FrameContainer, String> firm;
     public static volatile SingularAttribute<FrameContainer, String> model;
+    public static volatile SingularAttribute<FrameContainer, FrameInstallType>  frameInstallType;
+    public static volatile SingularAttribute<FrameContainer, FrameMaterial>  frameMaterial;
     public static volatile SingularAttribute<FrameContainer, String> details;
     public static volatile SingularAttribute<FrameContainer, BigDecimal> purchase;
     public static volatile SingularAttribute<FrameContainer, BigDecimal> sale;

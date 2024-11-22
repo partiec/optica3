@@ -2,13 +2,84 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Test</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Use JavaScript to Navigate Through a Table And Other Elements</title>
+    <style>
+        .is-active {
+            box-shadow: inset 0 -1px 0 0 rgb(0 0 0);
+        }
+    </style>
 </head>
 <body>
+<table id="mytable" tabindex="0">
+    <tr>
+        <td>One</td>
+    </tr>
+    <tr>
+        <td>Two</td>
+    </tr>
+    <tr>
+        <td>Three</td>
+    </tr>
+    <tr>
+        <td>Four</td>
+    </tr>
+    <tr>
+        <td>Five</td>
+    </tr>
+</table>
+<script>
+    function navigateElement(elementID, itemsTagName, activeClass, scroller) {
+        const mainDOMElement = document.getElementById(elementID);
+        const scrollElement = document.getElementById(scroller) || window;
+        const items = mainDOMElement.querySelectorAll(itemsTagName);
+        const itemsLength = items.length;
+        let selection = -1;
 
+        function handleKeyboard(e, which) {
+            if (e) e.preventDefault();
+            if (!e && !which) return;
+            items.forEach(item => item.classList.remove(activeClass));
+            const selectedIndex = which || e.which;
+            switch (selectedIndex) {
+                case 38:
+                    if (selection == 0) {
+                        selection = itemsLength - 1;
+                    } else {
+                        selection--;
+                    }
+                    handleScroll();
+                    break;
+                case 40:
+                    if (selection == itemsLength - 1) {
+                        selection = 0;
+                    } else {
+                        selection++;
+                    }
+                    handleScroll();
+                    break;
+                default:
+                    break;
+            }
+            items[selection].classList.add(activeClass);
+        };
+        function handleScroll() {
+            const el = mainDOMElement.getElementsByClassName(activeClass);
+            if (el.length) {
+                el[0].scrollIntoView({
+                    block: "center",
+                    behavior: "smooth",
+                });
+            }
+        }
+        mainDOMElement.addEventListener('keydown', handleKeyboard);
+        mainDOMElement.addEventListener("focus", () => {
+            if (selection < 0) handleKeyboard(null, 40);
+        });
+    }
 
-<p>Результат:</p>
-<p>1)<input data-th-value="${fuflo1}"></p>
-<p>2)<input data-th-value="${fuflo2}"></p>
+    navigateElement('mytable', 'tr', 'is-active');
+</script>
 </body>
 </html>

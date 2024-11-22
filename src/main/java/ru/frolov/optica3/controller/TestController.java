@@ -13,19 +13,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("api/test")
 public class TestController {
 
-    @GetMapping("meth1")
-    public String meth1(RedirectAttributes ra) {
 
-        // при перенаправлении флэш-атрибуты появляются в модели другого метода
-        ra.addFlashAttribute("fuflo1", "valueForFuflo1");
-        ra.addFlashAttribute("fuflo2", "valueForFuflo2");
-        return "redirect:/api/test/meth2";
-    }
-
-    @GetMapping("meth2")
+    @GetMapping
     public String meth2(Model model){
-        System.out.println(model.getAttribute("fuflo1"));
-        System.out.println(model.getAttribute("fuflo2"));
 
 
         return "test1";

@@ -1,24 +1,31 @@
 package ru.frolov.optica3.service;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import ru.frolov.optica3.cache.FiltersPayloadCache;
+import ru.frolov.optica3.cache.SpecStatusCache;
 import ru.frolov.optica3.defaults.Defaults;
-import ru.frolov.optica3.entity.FrameContainer;
+import ru.frolov.optica3.entity.frame.FrameContainer;
+import ru.frolov.optica3.payload.FiltersPayload;
+import ru.frolov.optica3.spec.SpecForFrames;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class PaginationService {
+
+    private final FrameContainerService containerService;
 
     public List<FrameContainer> getPageContent(List<FrameContainer> list,
                                                int pageNumber,
                                                int pageSize) {
-
-        System.out.println(
-                "_____________pagination getPageContent() list.size:" + list.size() +
-                "; pageNumber:" + pageNumber +
-                "; pageSize:" + pageSize);
 
         int startIndex = (pageNumber - 1) * pageSize;
         int endIndex = Math.min(startIndex + pageSize, list.size());
@@ -43,19 +50,33 @@ public class PaginationService {
     }
 
 
+    public Page<FrameContainer> createPageDependsOnSpecStatusAndCacheSpecStatus(int pageNumber) {
 
-    public int pageNumberOfNew(List<FrameContainer> list,
-                               Long id) {
-        int totalPages = totalPages(list, Defaults.PAGE_SIZE);
+        Pageable pageable = PageRequest.of(
+                pageNumber,
+                Defaults.PAGE_SIZE,
+                Sort.by(Sort.Direction.ASC, "firm"));
 
+        Page<FrameContainer> resultPage = null;
 
-        for (int i = 1; i <= totalPages; i++) {
-            Optional<FrameContainer> yeah = getPageContent(list, i, Defaults.PAGE_SIZE).stream()
-                    .filter(frameContainer -> frameContainer.getId().equals(id))
-                    .findFirst();
-            if (yeah.isPresent()) return i;
+        if (SpecStatusCache.isApplied()) {
+
+            FiltersPayload filters = FiltersPayloadCache.getFiltersPayload();
+            Specification<FrameContainer> spec = SpecForFrames.byAllFieldsContains(filters);
+
+            resultPage = this.containerService.getPage(
+                    spec,
+                    pageable);
+
+        } else {
+
+            resultPage = this.containerService.getPage(pageable);
+
         }
 
-        return 0;
+
+        return resultPage;
     }
+
+
 }
