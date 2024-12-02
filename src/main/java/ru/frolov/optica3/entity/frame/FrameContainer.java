@@ -2,8 +2,9 @@ package ru.frolov.optica3.entity.frame;
 
 import jakarta.persistence.*;
 import lombok.*;
-import ru.frolov.optica3.enums.enums_for_frames.FrameInstallType;
-import ru.frolov.optica3.enums.enums_for_frames.FrameMaterial;
+import ru.frolov.optica3.enums.frames_enums.FrameInstallType;
+import ru.frolov.optica3.enums.frames_enums.FrameMaterial;
+import ru.frolov.optica3.enums.frames_enums.FrameUseType;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -14,8 +15,8 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class FrameContainer {
-
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,10 +26,13 @@ public class FrameContainer {
     private String model;
     ////////////////////////
     @Enumerated(EnumType.STRING)
-    private FrameInstallType frameInstallType;
+    private FrameUseType useType;
 
     @Enumerated(EnumType.STRING)
-    private FrameMaterial frameMaterial;
+    private FrameInstallType installType;
+
+    @Enumerated(EnumType.STRING)
+    private FrameMaterial material;
     ////////////////////////
     private String details;
 
@@ -36,15 +40,8 @@ public class FrameContainer {
     private BigDecimal sale;
 
     @OneToMany(mappedBy = "frameContainer", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    List<Frame> frameList = new ArrayList<>();
+    private List<Frame> frameList = new ArrayList<>();
 
-    public FrameContainer(String firm, String model, String details, BigDecimal purchase, BigDecimal sale) {
-        this.firm = firm;
-        this.model = model;
-        this.details = details;
-        this.purchase = purchase;
-        this.sale = sale;
-    }
 
     public void addToFrameList(Frame frame) {
         this.frameList.add(frame);

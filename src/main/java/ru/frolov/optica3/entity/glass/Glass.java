@@ -1,13 +1,13 @@
-package ru.frolov.optica3.entity.frame;
+package ru.frolov.optica3.entity.glass;
 
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SourceType;
 import org.hibernate.annotations.UpdateTimestamp;
-import ru.frolov.optica3.enums.frames_enums.FrameInstallType;
-import ru.frolov.optica3.enums.frames_enums.FrameMaterial;
-import ru.frolov.optica3.enums.frames_enums.FrameUseType;
+import ru.frolov.optica3.enums.glass_enums.GlassCoat;
+import ru.frolov.optica3.enums.glass_enums.GlassDesign;
+import ru.frolov.optica3.enums.glass_enums.GlassMaterial;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @Builder
-public class Frame {
+public class Glass {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,16 +30,16 @@ public class Frame {
     private LocalDateTime changedAt;
 
     private String firm;
-    private String model;
-    ////////////////////////
+    ///////////////////////
     @Enumerated(EnumType.STRING)
-    private FrameUseType useType;
+    private GlassMaterial material;
 
     @Enumerated(EnumType.STRING)
-    private FrameInstallType installType;
+    private GlassDesign design;
 
     @Enumerated(EnumType.STRING)
-    private FrameMaterial material;
+    private GlassCoat coat ;
+
     ////////////////////////
     private String details;
 
@@ -47,8 +47,8 @@ public class Frame {
     private BigDecimal sale;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "frameContainer_id")
-    private FrameContainer frameContainer;
+    @JoinColumn(name = "glassContainer_id")
+    private GlassContainer glassContainer;
 
 
 

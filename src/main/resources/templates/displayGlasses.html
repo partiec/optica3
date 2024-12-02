@@ -2,7 +2,7 @@
 <html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
-    <title>EyeFramesList</title>
+    <title>Glasses</title>
     <link rel="stylesheet" data-th-href="@{/css/cssFrame.css}">
     <script src="js/jsFrame.js"></script>
 </head>
@@ -19,14 +19,14 @@
 <div class="search">
 
     <h2>
-        Оправы:
+        Очковые линзы:
     </h2>
     <hr>
 
-    <form onkeydown="return event.key != 'Enter';" method="post" data-th-action="@{/api/searchFrames}">
+    <form onkeydown="return event.key != 'Enter';" method="post" data-th-action="@{/api/searchGlasses}">
         <input id="whichFieldOnInput_id" type="hidden" name="whichFieldOnInput">
         <span>Начните вводить для автоматического поиска:</span>&nbsp;
-        <button type="submit" data-th-formaction="@{/api/noSpecFrames}">Найти все</button>
+        <button type="submit" data-th-formaction="@{/api/noSpecGlasses}">Найти все</button>
 
         <table>
             <tbody>
@@ -44,75 +44,63 @@
                            type="text" placeholder="Фирма*"
                            name="firm" data-th-value="${filters.firm}">
                 </td>
-                <td>
-                    <!-- |Модель| -->
-                    <input data-th-if="${whichFieldOnInput == 'model'}" autofocus
-                           onfocus="this.selectionStart = this.selectionEnd = this.value.length"
-                           oninput=" document.getElementById('whichFieldOnInput_id').value='model'; this.form.submit();"
-                           type="text" placeholder="Модель*"
-                           name="model" data-th-value="${filters.model}">
-                    <input data-th-unless="${whichFieldOnInput == 'model'}"
-                           onfocus="this.selectionStart = this.selectionEnd = this.value.length"
-                           oninput="document.getElementById('whichFieldOnInput_id').value='model'; this.form.submit();"
-                           type="text" placeholder="Модель*"
-                           name="model" data-th-value="${filters.model}">
-                </td>
+
                 <!-- ///////////////////////////////////////////////////////////////////////////////////// -->
                 <!-- |предназначение| -->
                 <td>
-                    <select onchange="this.form.submit()" name="useType">
-                        <option value="">Предназначение</option>
-                        <!--                        <option value=""></option>-->
+                    <select onchange="this.form.submit()" name="material">
+                        <option value="">Материал</option>
                         <option
-                                data-th-each="type : ${useTypes}"
-                                data-th-if="${type == filters.useType}" selected
-                                data-th-value="${type}"
-                                data-th-text="${type.str}">
+                                data-th-each="m : ${materials}"
+                                data-th-if="${m == filters.material}" selected
+                                data-th-value="${m}"
+                                data-th-text="${m.str}">
                         </option>
                         <option
-                                data-th-each="type : ${useTypes}"
-                                data-th-unless="${type == filters.useType}"
-                                data-th-value="${type}"
-                                data-th-text="${type.str}">
+                                data-th-each="m : ${materials}"
+                                data-th-unless="${m == filters.material}"
+                                data-th-value="${m}"
+                                data-th-text="${m.str}">
                         </option>
                     </select>
                     <input type="hidden"/>
                 </td>
 
-                <!-- |тип монтажа| -->
+                <!-- |дизайн| -->
                 <td>
-                    <select onchange="this.form.submit()" name="installType">
-                        <option value="">Тип</option>
+                    <select onchange="this.form.submit()" name="design">
+                        <option value="">Дизайн</option>
                         <option
-                                data-th-each="type : ${installTypes}"
-                                data-th-if="${type == filters.installType}" selected
-                                data-th-value="${type}"
-                                data-th-text="${type.str}">
+                                data-th-each="d : ${designs}"
+                                data-th-if="${d == filters.design}" selected
+                                data-th-value="${d}"
+                                data-th-text="${d.str}">
                         </option>
                         <option
-                                data-th-each="type : ${installTypes}"
-                                data-th-unless="${type == filters.installType}"
-                                data-th-value="${type}"
-                                data-th-text="${type.str}">
+                                data-th-each="d : ${designs}"
+                                data-th-unless="${d == filters.design}"
+                                data-th-value="${d}"
+                                data-th-text="${d.str}">
                         </option>
                     </select>
                     <input type="hidden"/>
                 </td>
+
                 <!-- |материал| -->
                 <td>
-                    <select onchange="this.form.submit()" name="material">
-                        <option value="">Материал</option>
+                    <select onchange="this.form.submit()" name="coat">
+                        <option value="">Покрытие</option>
                         <option
-                                data-th-each="material : ${materials}"
-                                data-th-if="${material == filters.material}" selected
-                                data-th-value="${material}"
-                                data-th-text="${material.str}">
+                                data-th-each="c : ${coats}"
+                                data-th-if="${c == filters.coat}" selected
+                                data-th-value="${c}"
+                                data-th-text="${c.str}">
                         </option>
                         <option
-                                data-th-each="material : ${materials}"
-                                data-th-unless="${material == filters.material}"
-                                data-th-value="${material}"
-                                data-th-text="${material.str}">
+                                data-th-each="c : ${coats}"
+                                data-th-unless="${c == filters.coat}"
+                                data-th-value="${c}"
+                                data-th-text="${c.str}">
                         </option>
                     </select>
                     <input type="hidden"/>
@@ -143,7 +131,7 @@
                 </td>
 
                 <td>
-                    <button type="submit" formaction="/api/clearFrameInputs">Очистить</button>
+                    <button type="submit" formaction="/api/clearInputs">Очистить</button>
                 </td>
                 <td>
                     <button type="submit">Найти</button>
@@ -154,7 +142,7 @@
         </table>
 
         <td colspan="2">
-            <button type="submit" formaction="/api/createFrame">Создать по введенным данным</button>
+            <button type="submit" formaction="/api/createGlass">Создать по введенным данным</button>
         </td>
     </form>
 
@@ -176,7 +164,11 @@
 
 <div class="search_result">
 
-    <!-- 1. edit table-->
+
+    <!-- 1. -->
+    <!--    edit table-->
+
+
     <div data-th-if="${editMode}" id="edit_table_div">
         <hr color="red">
         <table>
@@ -184,10 +176,9 @@
             <tr>
                 <th align="left">№</th>
                 <th align="left">Фирма</th>
-                <th align="left">Модель</th>
-                <th align="left">Предназначение</th>
-                <th align="left">Тип монтажа</th>
                 <th align="left">Материал</th>
+                <th align="left">Дизайн</th>
+                <th align="left">Покрытие</th>
                 <th align="left">Описание</th>
                 <th align="left">Закупка (руб.)</th>
                 <th align="left">Розница (руб.)</th>
@@ -199,8 +190,8 @@
             </tr>
             </thead>
 
-            <tbody class="telo">
-            <tr class="frame_row" data-th-each="container : ${page.getContent()}">
+            <tbody>
+            <tr data-th-each="container : ${page.getContent()}">
                 <!-- № и галочка-->
                 <td width="80">
                     <div data-th-if="${container.id == xId}">
@@ -215,7 +206,7 @@
                 </td>
 
                 <td width="100"><!-- firm -->
-                    <form method="post" data-th-action="@{/api/updateFrame}">
+                    <form method="post" data-th-action="@{/api/updateGlass}">
                         <input onblur=this.form.submit()
                                type="text"
                                data-th-name="firm"
@@ -224,62 +215,10 @@
                     </form>
                 </td>
 
-                <td width="100"><!-- model -->
-                    <form method="post" data-th-action="@{/api/updateFrame}">
-                        <input onblur=this.form.submit()
-                               type="text"
-                               data-th-name="model"
-                               data-th-value="${container.model}">
-                        <input type="hidden" name="xId" data-th-value="${container.id}">
-                    </form>
-                </td>
                 <!-- //////////////////////////////////////////////////////////////////////////////////////////////////////// -->
-                <td width="100"><!-- предназначение -->
-                    <form method="post" data-th-action="@{/api/updateFrame}">
-                        <select onchange="this.form.submit()" name="useType">
-                            <!--                            <option value="useTypeIsNotSelected"></option>-->
-                            <option
-                                    data-th-each="type : ${useTypes}"
-                                    data-th-if="${type == container.useType}" selected
-                                    data-th-value="${type}"
-                                    data-th-text="${type.str}">
-                            </option>
-                            <option
-                                    data-th-each="type : ${useTypes}"
-                                    data-th-unless="${type == container.useType}"
-                                    data-th-value="${type}"
-                                    data-th-text="${type.str}">
-                            </option>
-                        </select>
-                        <input type="hidden"/>
-                        <input type="hidden" name="xId" data-th-value="${container.id}">
-                    </form>
-                </td>
-                <td width="100"><!-- тип монтажа -->
-                    <form method="post" data-th-action="@{/api/updateFrame}">
-                        <select onchange="this.form.submit()" name="installType">
-                            <!--                            <option value="installTypeIsNotSelected"></option>-->
-                            <option
-                                    data-th-each="type : ${installTypes}"
-                                    data-th-if="${type == container.installType}" selected
-                                    data-th-value="${type}"
-                                    data-th-text="${type.str}">
-                            </option>
-                            <option
-                                    data-th-each="type : ${installTypes}"
-                                    data-th-unless="${type == container.installType}"
-                                    data-th-value="${type}"
-                                    data-th-text="${type.str}">
-                            </option>
-                        </select>
-                        <input type="hidden"/>
-                        <input type="hidden" name="xId" data-th-value="${container.id}">
-                    </form>
-                </td>
                 <td width="100"><!-- материал -->
-                    <form method="post" data-th-action="@{/api/updateFrame}">
+                    <form method="post" data-th-action="@{/api/updateGlass}">
                         <select onchange="this.form.submit()" name="material">
-                            <!--                            <option value="materialIsNotSelected"></option>-->
                             <option
                                     data-th-each="material : ${materials}"
                                     data-th-if="${material == container.material}" selected
@@ -297,10 +236,50 @@
                         <input type="hidden" name="xId" data-th-value="${container.id}">
                     </form>
                 </td>
+                <td width="100"><!-- дизайн -->
+                    <form method="post" data-th-action="@{/api/updateGlass}">
+                        <select onchange="this.form.submit()" name="design">
+                            <option
+                                    data-th-each="d : ${designs}"
+                                    data-th-if="${d == container.design}" selected
+                                    data-th-value="${d}"
+                                    data-th-text="${d.str}">
+                            </option>
+                            <option
+                                    data-th-each="d : ${designs}"
+                                    data-th-unless="${d == container.design}"
+                                    data-th-value="${d}"
+                                    data-th-text="${d.str}">
+                            </option>
+                        </select>
+                        <input type="hidden"/>
+                        <input type="hidden" name="xId" data-th-value="${container.id}">
+                    </form>
+                </td>
+                <td width="100"><!-- тип монтажа -->
+                    <form method="post" data-th-action="@{/api/updateGlass}">
+                        <select onchange="this.form.submit()" name="coat">
+                            <option
+                                    data-th-each="c : ${coats}"
+                                    data-th-if="${c == container.coat}" selected
+                                    data-th-value="${c}"
+                                    data-th-text="${c.str}">
+                            </option>
+                            <option
+                                    data-th-each="c : ${coats}"
+                                    data-th-unless="${c == container.coat}"
+                                    data-th-value="${c}"
+                                    data-th-text="${c.str}">
+                            </option>
+                        </select>
+                        <input type="hidden"/>
+                        <input type="hidden" name="xId" data-th-value="${container.id}">
+                    </form>
+                </td>
                 <!-- //////////////////////////////////////////////////////////////////////////////////////////////////////// -->
 
                 <td width="100"><!-- details -->
-                    <form method="post" data-th-action="@{/api/updateFrame}">
+                    <form method="post" data-th-action="@{/api/updateGlass}">
                         <input onblur=this.form.submit()
                                type="text"
                                data-th-name="details"
@@ -310,7 +289,7 @@
                 </td>
 
                 <td width="100"><!-- purchase -->
-                    <form method="post" data-th-action="@{/api/updateFrame}">
+                    <form method="post" data-th-action="@{/api/updateGlass}">
                         <input onblur=this.form.submit()
                                type="number"
                                data-th-name="purchase"
@@ -320,7 +299,7 @@
                 </td>
 
                 <td width="100"><!-- sale -->
-                    <form method="post" data-th-action="@{/api/updateFrame}">
+                    <form method="post" data-th-action="@{/api/updateGlass}">
                         <input onblur=this.form.submit()
                                type="number"
                                data-th-name="sale"
@@ -331,12 +310,12 @@
                 </td>
 
                 <td width="100" align="center"><!-- Колличество (шт.) -->
-                    <span data-th-text="${#lists.size(container.frameList)}"></span>
+                    <span data-th-text="${#lists.size(container.glassList)}"></span>
                 </td>
 
                 <!-- +1 -->
                 <td>
-                    <form method="post" data-th-action="@{/api/plus1Frame}">
+                    <form method="post" data-th-action="@{/api/plus1Glass}">
                         <input type="hidden" name="xId" data-th-value="${container.id}">
                         <input type="hidden" name="pageNumber" data-th-value="${pageNumber}">
                         <input type="submit" value="+1">
@@ -345,7 +324,7 @@
 
                 <!-- -1 -->
                 <td>
-                    <form method="post" data-th-action="@{/api/minus1Frame}">
+                    <form method="post" data-th-action="@{/api/minus1Glass}">
                         <input type="hidden" name="xId" data-th-value="${container.id}">
                         <input type="hidden" name="pageNumber" data-th-value="${pageNumber}">
                         <input type="submit" value="-1">
@@ -354,7 +333,7 @@
 
                 <!-- Удалить позицию-->
                 <td>
-                    <form method="post" data-th-action="@{/api/deleteFramePosition}">
+                    <form method="post" data-th-action="@{/api/deleteGlassPosition}">
                         <input type="hidden" name="xId" data-th-value="${container.id}">
                         <input type="submit" value="Удалить позицию">
                     </form>
@@ -381,10 +360,9 @@
             <tr>
                 <th align="left">№</th>
                 <th align="left">Фирма</th>
-                <th align="left">Модель</th>
-                <th align="left">Предназначение</th>
-                <th align="left">Тип монтажа</th>
                 <th align="left">Материал</th>
+                <th align="left">Дизайн</th>
+                <th align="left">Покрытие</th>
                 <th align="left">Описание</th>
                 <th align="left">Закупка (руб.)</th>
                 <th align="left">Розница (руб.)</th>
@@ -412,7 +390,7 @@
             <tr>
                 <td></td>
             </tr>
-            <tr class="frame_row" data-th-each="container : ${page.getContent()}">
+            <tr data-th-each="container : ${page.getContent()}">
                 <!-- № и галочка-->
                 <td width="80" align="left">
                     <div data-th-if="${container.id == xId}">
@@ -430,22 +408,19 @@
                     <label data-th-text="${container.firm}">*фирма*</label>
                 </td>
 
-                <td width="150" align="left"><!-- model -->
-                    <label data-th-text="${container.model}">*модель*</label>
-                </td>
-
                 <!-- //////////////////////////////////////////////////////////////////////////////////////////////////////// -->
-                <td width="150" align="left"><!-- тип монтажа -->
-                    <label data-th-text="${container.getUseType() == null ? null : container.getUseType().getStr()}"></label>
-                </td>
-
-                <td width="150" align="left"><!-- тип монтажа -->
-                    <label data-th-text="${container.getInstallType() == null ? null : container.getInstallType().getStr()}"></label>
-                </td>
-
-                <td width="150" align="left"><!-- тип монтажа -->
+                <td width="150" align="left"><!-- материал -->
                     <label data-th-text="${container.getMaterial() == null ? null : container.getMaterial().getStr()}"></label>
                 </td>
+
+                <td width="150" align="left"><!-- дизайн -->
+                    <label data-th-text="${container.getDesign() == null ? null : container.getDesign().getStr()}"></label>
+                </td>
+
+                <td width="150" align="left"><!-- покрытие -->
+                    <label data-th-text="${container.getCoat() == null ? null : container.getCoat().getStr()}"></label>
+                </td>
+
                 <!-- //////////////////////////////////////////////////////////////////////////////////////////////////////// -->
 
                 <td width="150" align="left"><!-- details -->
@@ -461,12 +436,12 @@
                 </td>
 
                 <td align="left"><!-- Колличество (шт.) -->
-                    <span data-th-text="${#lists.size(container.frameList)}"></span>
+                    <span data-th-text="${#lists.size(container.glassList)}"></span>
                 </td>
 
                 <!-- В ЗАКАЗ -->
                 <td>
-                    <form method="post" data-th-action="@{/api/deleteFrame/{id}(id=${container.id})}">
+                    <form method="post" data-th-action="@{/api/toOrder}">
                         <input type="submit" value="В ЗАКАЗ">
                     </form>
                 </td>
@@ -495,29 +470,29 @@
 
         <!-- Назад    -->
         <a data-th-if="${page.getNumber() > 0}"
-           data-th-href="@{'/api/flipFramePage/' + ${page.getNumber() - 1}}">&#9668;</a>&nbsp;
+           data-th-href="@{'/api/flipGlassPage/' + ${page.getNumber() - 1}}">&#9668;</a>&nbsp;
         <label data-th-unless="${page.getNumber() > 0}">&#9668;</label>&nbsp;
 
         <!-- Цифры    -->
         <span data-th-each="i : ${#numbers.sequence(0, page.getTotalPages() - 1)}">
                 <a data-th-if="${i != page.getNumber()}"
-                   data-th-href="@{'/api/flipFramePage/' + ${i}}">[[${i + 1}]]</a>
+                   data-th-href="@{'/api/flipGlassPage/' + ${i}}">[[${i + 1}]]</a>
                 <span data-th-unless="${i != page.getNumber()}" class="currentPage">[[${i + 1}]]</span>
             </span>&nbsp;
 
         <!--  Вперед -->
         <a data-th-if="${page.getNumber() < (page.getTotalPages() - 1)}"
-           data-th-href="@{'/api/flipFramePage/' + ${page.getNumber() + 1} }">&#9658;</a>
+           data-th-href="@{'/api/flipGlassPage/' + ${page.getNumber() + 1} }">&#9658;</a>
         <label data-th-unless="${page.getNumber() < (page.getTotalPages() - 1)}">&#9658;</label>
 
         <br><br>
 
         <hr>
         <!-- включить редактирование-->
-        <form data-th-unless="${editMode}" method="get" data-th-action="@{/api/editFrame_on}">
+        <form data-th-unless="${editMode}" method="get" data-th-action="@{/api/editGlass_on}">
             <input type="submit" value="Включить редактирование">
         </form>&nbsp;
-        <form data-th-if="${editMode}" method="get" data-th-action="@{/api/editFrame_off}">
+        <form data-th-if="${editMode}" method="get" data-th-action="@{/api/editGlass_off}">
             <span color="red">Внимание! Включен режим редактирования. Любые внесенные изменения сохраняются.</span>
             <hr color="red">
             <input type="submit" value="Выключить редактирование">

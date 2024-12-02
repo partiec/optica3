@@ -13,9 +13,9 @@
 }
 
 .leftMenu {
-    width: 200px;
-    background-color: royalblue;
-    color: darkturquoise;
+    width: 150px;
+    background-color: chartreuse;
+    color: darkblue;
     border-radius: 30px;
     display: inline;
     border: fuchsia;
@@ -24,7 +24,7 @@
 .search {
     position: relative;
     width: 1700px;
-    right: -250px;
+    right: -200px;
     top: -150px;
 
     background-color: azure;
@@ -40,7 +40,7 @@
 .search_result {
     position: relative;
     width: 1700px;
-    right: -250px;
+    right: -200px;
     top: -150px;
 
     border-spacing: 0;
