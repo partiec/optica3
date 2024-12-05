@@ -6,7 +6,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import ru.frolov.optica3.entity.frame.FrameContainer;
 import ru.frolov.optica3.entity.glass.GlassContainer;
 import ru.frolov.optica3.service.glass_services.*;
 
@@ -30,7 +29,7 @@ public class FlipPages_GlassController {
         // ------------------------------>
         // page должна быть с другим pageNumber, но specStatus тот же
         // метод использует spеcStatus из кэша и создаст page с номером из @PathVariable
-        Page<GlassContainer>actualPage = paginationService.createPageDependsOnSpecStatusAndCacheSpecStatus(pageNumber);
+        Page<GlassContainer>actualPage = paginationService.createPageDependsOnSpecStatus(pageNumber, null);
 
         // Отправка данных в модель
         // --------------------------->
@@ -38,6 +37,7 @@ public class FlipPages_GlassController {
                 model,
                 actualPage,
                 pageNumber,
+                null,
                 null,
                 null);
 

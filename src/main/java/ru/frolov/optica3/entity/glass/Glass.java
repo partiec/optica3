@@ -31,6 +31,7 @@ public class Glass {
 
     private String firm;
     ///////////////////////
+
     @Enumerated(EnumType.STRING)
     private GlassMaterial material;
 
@@ -45,6 +46,8 @@ public class Glass {
 
     private BigDecimal purchase;
     private BigDecimal sale;
+
+    private String dioptre;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "glassContainer_id")

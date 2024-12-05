@@ -13,18 +13,12 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
-import ru.frolov.optica3.cache.frame_caches.FiltersPayload_FrameCache;
-import ru.frolov.optica3.cache.frame_caches.Page_FrameCache;
-import ru.frolov.optica3.cache.frame_caches.SpecStatus_FrameCache;
 import ru.frolov.optica3.cache.glass_caches.FiltersPayload_GlassCache;
 import ru.frolov.optica3.cache.glass_caches.Page_GlassCache;
 import ru.frolov.optica3.cache.glass_caches.SpecStatus_GlassCache;
 import ru.frolov.optica3.defaults.Defaults;
-import ru.frolov.optica3.entity.frame.Frame;
-import ru.frolov.optica3.entity.frame.FrameContainer;
 import ru.frolov.optica3.entity.glass.Glass;
 import ru.frolov.optica3.entity.glass.GlassContainer;
-import ru.frolov.optica3.payload.frame_payloads.Filters_FramePayload;
 import ru.frolov.optica3.payload.glass_payloads.Filters_GlassPayload;
 import ru.frolov.optica3.service.glass_services.Cache_GlassService;
 import ru.frolov.optica3.service.glass_services.GlassContainerService;
@@ -50,6 +44,7 @@ public class Create_GlassController {
                               Model model) {
 
         GlassContainer xContainer;
+
         // существуют ли уже такие контейнеры?
         List<GlassContainer> dubls = this.containerService.dubls(filters);
         // если такого еще нет
@@ -65,6 +60,7 @@ public class Create_GlassController {
             xContainer.setDetails(filters.details());
             xContainer.setPurchase(filters.purchase());
             xContainer.setSale(filters.sale());
+            xContainer.setDioptre(filters.dioptre());
         } else {
             // если такой уже есть
             xContainer = dubls.get(0);
@@ -84,6 +80,7 @@ public class Create_GlassController {
         newGlass.setDetails(xContainer.getDetails());
         newGlass.setPurchase(xContainer.getPurchase());
         newGlass.setSale(xContainer.getSale());
+        newGlass.setDioptre(xContainer.getDioptre());
 
         // связать newUnit и xContainer
         newGlass.setGlassContainer(xContainer);
@@ -101,7 +98,7 @@ public class Create_GlassController {
         // xId нужен будет в html для галочки (которая помечает созданный контейнер)
         Long xId = xContainer.getId();
         // filters уже не нужны, кэшируем костыль
-        FiltersPayload_GlassCache.setFiltersPayload(new Filters_GlassPayload( null, null, null, null, null, null, null));
+        FiltersPayload_GlassCache.setFiltersPayload(new Filters_GlassPayload(null, null, null, null, null, null, null, null));
         //----------------------------/
 
         // В модель
@@ -111,8 +108,8 @@ public class Create_GlassController {
                 actualPage,
                 null,
                 xId,
-                null
-        );
+                null,
+                null);
 
         // Контрольное кеширование
         cacheService.cacheAttributes(

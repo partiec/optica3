@@ -8,7 +8,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.frolov.optica3.cache.frame_caches.Page_FrameCache;
-import ru.frolov.optica3.entity.frame.FrameContainer;
 import ru.frolov.optica3.entity.glass.GlassContainer;
 import ru.frolov.optica3.service.glass_services.*;
 
@@ -41,7 +40,7 @@ public class DeletePosition_GlassController {
 
         // метод создаст page в зависимости от specStatus
         Page<GlassContainer> actualPage =
-                paginationService.createPageDependsOnSpecStatusAndCacheSpecStatus(pageNumber);
+                paginationService.createPageDependsOnSpecStatus(pageNumber, null);
 
         // Отправляем данные в модель
         // --------------------------->
@@ -50,6 +49,7 @@ public class DeletePosition_GlassController {
                 actualPage,
                 null,
                 xId,
+                null,
                 null);
 
         // Контрольное кэширование

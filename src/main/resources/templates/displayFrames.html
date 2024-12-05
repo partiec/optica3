@@ -31,8 +31,12 @@
         <table>
             <tbody>
             <tr>
+                <!-- галочка (если фильтры копированы из таблицы) -->
                 <td>
-                    <!-- |Фирма|  -->
+                    <span data-th-if="${copyToSearch}">&#9989;</span>
+                </td>
+                <!-- |Фирма|  -->
+                <td>
                     <input data-th-if="${whichFieldOnInput == 'firm'} " autofocus
                            onfocus="this.selectionStart = this.selectionEnd = this.value.length"
                            oninput="document.getElementById('whichFieldOnInput_id').value='firm';this.form.submit();"
@@ -62,7 +66,6 @@
                 <td>
                     <select onchange="this.form.submit()" name="useType">
                         <option value="">Предназначение</option>
-                        <!--                        <option value=""></option>-->
                         <option
                                 data-th-each="type : ${useTypes}"
                                 data-th-if="${type == filters.useType}" selected
@@ -195,6 +198,7 @@
                 <th><!-- +1 --></th>
                 <th><!-- -1 --></th>
                 <th><!-- Удалить позицию --></th>
+                <th><!-- Копир. в поиск --></th>
                 <th><!-- В ЗАКАЗ --></th>
             </tr>
             </thead>
@@ -360,6 +364,14 @@
                     </form>
                 </td>
 
+                <!-- Копировать в поиск -->
+                <td>
+                    <form method="post" data-th-action="@{/api/copyToSearchFrames}">
+                        <input type="hidden" name="xId" data-th-value="${container.id}">
+                        <input type="submit" value="Копир. в поиск">
+                    </form>
+                </td>
+
                 <!-- В ЗАКАЗ -->
                 <td>
                     <form method="post" data-th-action="@{/api/toOrder}">
@@ -373,7 +385,8 @@
         <hr color="red">
     </div>
 
-    <!-- 2. no edit table -->
+    <!-- 2.  -->
+    <!--    no edit table -->
     <div data-th-unless="${editMode}" id="no_edit_table">
         <hr>
         <table>
@@ -392,6 +405,7 @@
                 <th><!-- +1 --></th>
                 <th><!-- -1 --></th>
                 <th><!-- Удалить позицию --></th>
+                <th><!-- Копировать в поиск --></th>
                 <th><!-- В ЗАКАЗ --></th>
             </tr>
             </thead>
@@ -462,6 +476,14 @@
 
                 <td align="left"><!-- Колличество (шт.) -->
                     <span data-th-text="${#lists.size(container.frameList)}"></span>
+                </td>
+
+                <!-- Копировать в поиск -->
+                <td>
+                    <form method="post" data-th-action="@{/api/copyToSearchFrames}">
+                        <input type="hidden" name="xId" data-th-value="${container.id}">
+                        <input type="submit" value="Копир. в поиск">
+                    </form>
                 </td>
 
                 <!-- В ЗАКАЗ -->

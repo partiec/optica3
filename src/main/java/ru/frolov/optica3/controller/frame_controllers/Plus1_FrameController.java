@@ -73,6 +73,7 @@ public class Plus1_FrameController {
                 actualPage,
                 null,
                 xId,
+                null,
                 null);
 
         // Контрольное кэширование

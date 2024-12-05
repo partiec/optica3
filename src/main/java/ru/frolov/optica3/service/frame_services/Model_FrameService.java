@@ -28,7 +28,8 @@ public class Model_FrameService {
                               Page<FrameContainer> actualPage,
                               Integer pageNumberOnlyForFlip,
                               Long xId,
-                              String whichFieldOnInputOnlyForSearch) {
+                              String whichFieldOnInputOnlyForSearch,
+                              String copyToSearch) {
 
         // page
         Page<FrameContainer> page = null;
@@ -90,5 +91,8 @@ public class Model_FrameService {
         model.addAttribute("installTypes", FrameInstallType.values());
         model.addAttribute("materials", FrameMaterial.values());
         //////////////////////////
+        if (copyToSearch != null){
+            model.addAttribute("copyToSearch", "copyToSearch");
+        }
     }
 }

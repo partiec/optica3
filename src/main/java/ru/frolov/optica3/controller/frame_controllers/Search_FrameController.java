@@ -21,7 +21,7 @@ import ru.frolov.optica3.service.frame_services.Pagination_FrameService;
 public class Search_FrameController {
 
     private final FrameContainerService containerService;
-    private final Pagination_FrameService paginationFrameService;
+    private final Pagination_FrameService paginationService;
     private final Model_FrameService modelFrameService;
     private final Cache_FrameService cacheFrameService;
 //-------------------------------------------------------------------------------------------
@@ -51,7 +51,7 @@ public class Search_FrameController {
         // page однозначно должна быть bySpec
         SpecStatus_FrameCache.setApplied(true);
         FiltersPayload_FrameCache.setFiltersFramePayload(filters);
-        Page<FrameContainer> actualPage = this.paginationFrameService.createPageDependsOnSpecStatusAndCacheSpecStatus(0);
+        Page<FrameContainer> actualPage = this.paginationService.createPageDependsOnSpecStatusAndCacheSpecStatus(0);
 
 
         // Отправка данных в модель
@@ -61,7 +61,8 @@ public class Search_FrameController {
                 actualPage,
                 null,                       // (pageNumberForFlip) - здесь не нужен
                 null,                       // (xId) - здесь не нужен
-                whichFieldOnInput);         // (whichFieldOnInputForSearch) - нужен для фокуса в html
+                whichFieldOnInput,
+                null);         // (whichFieldOnInputForSearch) - нужен для фокуса в html
 
         // Контрольное кэширование
         cacheFrameService.cacheAttributes(

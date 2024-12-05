@@ -5,14 +5,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import ru.frolov.optica3.entity.frame.Frame;
-import ru.frolov.optica3.entity.frame.FrameContainer;
 import ru.frolov.optica3.entity.glass.Glass;
 import ru.frolov.optica3.entity.glass.GlassContainer;
-import ru.frolov.optica3.payload.frame_payloads.Filters_FramePayload;
 import ru.frolov.optica3.payload.glass_payloads.Filters_GlassPayload;
 import ru.frolov.optica3.repository.glass_repositories.GlassContainerRepository;
-import ru.frolov.optica3.spec.frame_spec.SpecForFrames;
 import ru.frolov.optica3.spec.glass_spec.SpecForGlasses;
 
 import java.util.Iterator;
@@ -38,20 +34,21 @@ public class GlassContainerServiceImpl implements GlassContainerService {
 
     @Override
     public List<GlassContainer> dubls(Filters_GlassPayload filters) {
-        Specification<GlassContainer> byAllFields = SpecForGlasses.byAllFieldsLike(filters);
+        Specification<GlassContainer> byAllFields = SpecForGlasses.byAllLike(filters);
         return this.containerRepository.findAll(byAllFields);
     }
 
     @Override
     public List<GlassContainer> dubls(GlassContainer xContainer) {
-        Specification<GlassContainer> byAllFields = SpecForGlasses.byAllFieldsLike(new Filters_GlassPayload(
+        Specification<GlassContainer> byAllFields = SpecForGlasses.byAllLike(new Filters_GlassPayload(
                 xContainer.getFirm(),
                 xContainer.getMaterial(),
                 xContainer.getDesign(),
                 xContainer.getCoat(),
                 xContainer.getDetails(),
                 xContainer.getPurchase(),
-                xContainer.getSale()));
+                xContainer.getSale(),
+                xContainer.getDioptre()));
         return this.containerRepository.findAll(byAllFields);
     }
 
@@ -110,6 +107,7 @@ public class GlassContainerServiceImpl implements GlassContainerService {
                 currentGlass.setDetails(xContainer.getDetails());
                 currentGlass.setPurchase(xContainer.getPurchase());
                 currentGlass.setSale(xContainer.getSale());
+                currentGlass.setDioptre(xContainer.getDioptre());
                 currentGlass.setGlassContainer(xContainer);
             }
 

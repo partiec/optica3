@@ -31,7 +31,8 @@ public record Filters_GlassPayload(
         /////////////////////////////////////
         String details,
         BigDecimal purchase,
-        BigDecimal sale
+        BigDecimal sale,
+        String dioptre
 
 ) {
 }

@@ -43,6 +43,7 @@ public class EditMode_GlassController {
                 samePage,
                 null,
                 null,
+                null,
                 null);
 
         // Контрольное кэширование
@@ -73,6 +74,7 @@ public class EditMode_GlassController {
         modelService.transferModel(
                 model,
                 samePage,
+                null,
                 null,
                 null,
                 null);

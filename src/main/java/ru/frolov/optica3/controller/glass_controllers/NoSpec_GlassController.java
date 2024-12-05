@@ -7,10 +7,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import ru.frolov.optica3.cache.frame_caches.SpecStatus_FrameCache;
+import ru.frolov.optica3.cache.glass_caches.FiltersPayload_GlassCache;
 import ru.frolov.optica3.cache.glass_caches.SpecStatus_GlassCache;
-import ru.frolov.optica3.entity.frame.FrameContainer;
 import ru.frolov.optica3.entity.glass.GlassContainer;
+import ru.frolov.optica3.payload.glass_payloads.Filters_GlassPayload;
 import ru.frolov.optica3.service.glass_services.*;
 
 
@@ -34,7 +34,9 @@ public class NoSpec_GlassController {
         // кэшируем specStatus(false):
         SpecStatus_GlassCache.setApplied(false);
         // создаем page noSpec № 0
-        Page<GlassContainer>actualPage = paginationService.createPageDependsOnSpecStatusAndCacheSpecStatus(0);
+        Page<GlassContainer> actualPage = paginationService.createPageDependsOnSpecStatus(0, null);
+        // кэшируем filters костыли
+        FiltersPayload_GlassCache.setFiltersPayload(new Filters_GlassPayload(null, null, null, null, null, null, null, null));
 
 
         // Отправка данных в модель
@@ -43,7 +45,8 @@ public class NoSpec_GlassController {
                 actualPage,
                 null,
                 null,
-                 null);
+                null,
+                null);
 
         // Контрольное кэширование
         // ----------------------->

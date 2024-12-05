@@ -31,8 +31,12 @@
         <table>
             <tbody>
             <tr>
+                <!-- галочка (если фильтры копированы из таблицы) -->
                 <td>
-                    <!-- |Фирма|  -->
+                    <span data-th-if="${copyToSearch}">&#9989;</span>
+                </td>
+                <!-- |Фирма|  -->
+                <td>
                     <input data-th-if="${whichFieldOnInput == 'firm'} " autofocus
                            onfocus="this.selectionStart = this.selectionEnd = this.value.length"
                            oninput="document.getElementById('whichFieldOnInput_id').value='firm';this.form.submit();"
@@ -46,21 +50,21 @@
                 </td>
 
                 <!-- ///////////////////////////////////////////////////////////////////////////////////// -->
-                <!-- |предназначение| -->
+                <!-- |материал| -->
                 <td>
                     <select onchange="this.form.submit()" name="material">
                         <option value="">Материал</option>
                         <option
-                                data-th-each="m : ${materials}"
-                                data-th-if="${m == filters.material}" selected
-                                data-th-value="${m}"
-                                data-th-text="${m.str}">
+                                data-th-each="material : ${materials}"
+                                data-th-if="${material == filters.material}" selected
+                                data-th-value="${material}"
+                                data-th-text="${material.str}">
                         </option>
                         <option
-                                data-th-each="m : ${materials}"
-                                data-th-unless="${m == filters.material}"
-                                data-th-value="${m}"
-                                data-th-text="${m.str}">
+                                data-th-each="material : ${materials}"
+                                data-th-unless="${material == filters.material}"
+                                data-th-value="${material}"
+                                data-th-text="${material.str}">
                         </option>
                     </select>
                     <input type="hidden"/>
@@ -130,8 +134,31 @@
                            name="sale" data-th-value="${filters.sale}">
                 </td>
 
+                <!--////////////-->
+                <!-- |диоптрия| -->
                 <td>
-                    <button type="submit" formaction="/api/clearInputs">Очистить</button>
+                    <select  name="dioptre"
+                             onchange="document.getElementById('whichFieldOnInput_id').value='dioptre';this.form.submit();">
+                        <option value="">Диоптрия</option>
+                        <option
+                                data-th-each="d : ${dioptres}"
+                                data-th-if="${d == filters.dioptre}" selected
+                                data-th-value="${d}"
+                                data-th-text="${d}">
+                        </option>
+                        <option
+                                data-th-each="d : ${dioptres}"
+                                data-th-unless="${d == filters.dioptre}"
+                                data-th-value="${d}"
+                                data-th-text="${d}">
+                        </option>
+                    </select>
+                    <input type="hidden"/>
+                </td>
+                <!--////////////-->
+
+                <td>
+                    <button type="submit" formaction="/api/clearGlassInputs">Очистить</button>
                 </td>
                 <td>
                     <button type="submit">Найти</button>
@@ -182,10 +209,12 @@
                 <th align="left">Описание</th>
                 <th align="left">Закупка (руб.)</th>
                 <th align="left">Розница (руб.)</th>
+                <th align="left">Диоптрия</th>
                 <th align="left">Количество (шт.)</th>
                 <th><!-- +1 --></th>
                 <th><!-- -1 --></th>
                 <th><!-- Удалить позицию --></th>
+                <th><!-- Копир. в поиск --></th>
                 <th><!-- В ЗАКАЗ --></th>
             </tr>
             </thead>
@@ -306,8 +335,30 @@
                                data-th-value="${container.sale}">
                         <input type="hidden" name="xId" data-th-value="${container.id}">
                     </form>
-
                 </td>
+
+                <!--////////////////-->
+                <td width="100"><!-- диоптрия -->
+                    <form method="post" data-th-action="@{/api/updateGlass}">
+                        <select onchange="this.form.submit()" name="dioptre">
+                            <option
+                                    data-th-each="d : ${dioptres}"
+                                    data-th-if="${d == container.dioptre}" selected
+                                    data-th-value="${d}"
+                                    data-th-text="${d}">
+                            </option>
+                            <option
+                                    data-th-each="d : ${dioptres}"
+                                    data-th-unless="${d == container.dioptre}"
+                                    data-th-value="${d}"
+                                    data-th-text="${d}">
+                            </option>
+                        </select>
+                        <input type="hidden"/>
+                        <input type="hidden" name="xId" data-th-value="${container.id}">
+                    </form>
+                </td>
+                <!--////////////////-->
 
                 <td width="100" align="center"><!-- Колличество (шт.) -->
                     <span data-th-text="${#lists.size(container.glassList)}"></span>
@@ -339,6 +390,14 @@
                     </form>
                 </td>
 
+                <!-- Копировать в поиск -->
+                <td>
+                    <form method="post" data-th-action="@{/api/copyToSearchGlasses}">
+                        <input type="hidden" name="xId" data-th-value="${container.id}">
+                        <input type="submit" value="Копир. в поиск">
+                    </form>
+                </td>
+
                 <!-- В ЗАКАЗ -->
                 <td>
                     <form method="post" data-th-action="@{/api/toOrder}">
@@ -352,7 +411,9 @@
         <hr color="red">
     </div>
 
-    <!-- 2. no edit table -->
+    <!-- 2.  -->
+    <!--    no edit table -->
+
     <div data-th-unless="${editMode}" id="no_edit_table">
         <hr>
         <table>
@@ -366,10 +427,12 @@
                 <th align="left">Описание</th>
                 <th align="left">Закупка (руб.)</th>
                 <th align="left">Розница (руб.)</th>
+                <th align="left">Диоптрия</th>
                 <th align="left">Количество (шт.)</th>
                 <th><!-- +1 --></th>
                 <th><!-- -1 --></th>
                 <th><!-- Удалить позицию --></th>
+                <th><!-- Копировать в поиск --></th>
                 <th><!-- В ЗАКАЗ --></th>
             </tr>
             </thead>
@@ -435,8 +498,20 @@
                     <label data-th-text="${container.sale}">*продажа*</label>
                 </td>
 
+                <td width="150" align="left"><!-- dioptre -->
+                    <label data-th-text="${container.dioptre}">*диоптр*</label>
+                </td>
+
                 <td align="left"><!-- Колличество (шт.) -->
                     <span data-th-text="${#lists.size(container.glassList)}"></span>
+                </td>
+
+                <!-- Копировать в поиск -->
+                <td>
+                    <form method="post" data-th-action="@{/api/copyToSearchGlasses}">
+                        <input type="hidden" name="xId" data-th-value="${container.id}">
+                        <input type="submit" value="Копир. в поиск">
+                    </form>
                 </td>
 
                 <!-- В ЗАКАЗ -->

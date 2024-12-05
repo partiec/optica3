@@ -53,9 +53,9 @@ public class Pagination_FrameService {
     public Page<FrameContainer> createPageDependsOnSpecStatusAndCacheSpecStatus(int pageNumber) {
 
         Pageable pageable = PageRequest.of(
-                pageNumber,
-                Defaults.PAGE_SIZE,
-                Sort.by(Sort.Direction.ASC, "firm"));
+                        pageNumber,
+                        Defaults.PAGE_SIZE)
+                .withSort(Sort.Direction.ASC, "firm", "model", "useType", "installType", "material", "details", "purchase", "sale");
 
         Page<FrameContainer> resultPage = null;
 

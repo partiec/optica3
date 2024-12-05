@@ -40,6 +40,7 @@ public class EditMode_FrameController {
                 samePage,
                 null,
                 null,
+                null,
                 null);
 
         // Контрольное кэширование
@@ -70,6 +71,7 @@ public class EditMode_FrameController {
         modelFrameService.transferModel(
                 model,
                 samePage,
+                null,
                 null,
                 null,
                 null);

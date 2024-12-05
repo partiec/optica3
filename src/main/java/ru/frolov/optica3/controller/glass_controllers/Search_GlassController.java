@@ -6,13 +6,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import ru.frolov.optica3.cache.frame_caches.FiltersPayload_FrameCache;
-import ru.frolov.optica3.cache.frame_caches.SpecStatus_FrameCache;
 import ru.frolov.optica3.cache.glass_caches.FiltersPayload_GlassCache;
 import ru.frolov.optica3.cache.glass_caches.SpecStatus_GlassCache;
-import ru.frolov.optica3.entity.frame.FrameContainer;
 import ru.frolov.optica3.entity.glass.GlassContainer;
-import ru.frolov.optica3.payload.frame_payloads.Filters_FramePayload;
 import ru.frolov.optica3.payload.glass_payloads.Filters_GlassPayload;
 import ru.frolov.optica3.service.glass_services.Cache_GlassService;
 import ru.frolov.optica3.service.glass_services.GlassContainerService;
@@ -39,22 +35,37 @@ public class Search_GlassController {
             Model model) {
 
 
+        System.out.println(".............................................................................................................................");
+        System.out.println("___searchGlasses()...Filters(" +
+                filters.firm() + "," +
+                filters.material() + "," +
+                filters.design() + "," +
+                filters.coat() + "," +
+                filters.details() + "," +
+                filters.purchase()  + "," +
+                filters.sale()  + "," +
+                filters.dioptre() + ");");
+        System.out.println("//////////// whichFieldOnInput = '" + whichFieldOnInput + "'  !!!");
+
         // Подготовка данных для модели
         // --------------------------->
-        // page однозначно должна быть bySpec
+        // кэшируем specStatus bySpec, поскольку page должна быть создана bySpec
         SpecStatus_GlassCache.setApplied(true);
+        // кэшируем фильтры
         FiltersPayload_GlassCache.setFiltersPayload(filters);
-        Page<GlassContainer> actualPage = this.paginationService.createPageDependsOnSpecStatusAndCacheSpecStatus(0);
+        // создаем страницу № 0 в зависимости от specStatus (здесь bySpec)
+        Page<GlassContainer> actualPage = this.paginationService.createPageDependsOnSpecStatus(0, whichFieldOnInput);
 
 
         // Отправка данных в модель
         // ------------------------->
         modelService.transferModel(
-                model,                      // model___
+                model,
                 actualPage,
-                null,                       // (pageNumberForFlip) - здесь не нужен
-                null,                       // (xId) - здесь не нужен
-                whichFieldOnInput);         // (whichFieldOnInputForSearch) - нужен для фокуса в html
+                null,
+                null,
+                whichFieldOnInput,
+                null);
 
         // Контрольное кэширование
         cacheService.cacheAttributes(

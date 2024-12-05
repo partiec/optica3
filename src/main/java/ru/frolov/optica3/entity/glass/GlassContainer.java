@@ -34,6 +34,7 @@ public class GlassContainer {
 
     private String firm;
     ///////////////////////
+
     @Enumerated(EnumType.STRING)
     private GlassMaterial material;
 
@@ -48,6 +49,8 @@ public class GlassContainer {
 
     private BigDecimal purchase;
     private BigDecimal sale;
+
+    private String dioptre;
 
     @OneToMany(mappedBy = "glassContainer", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Glass>glassList = new ArrayList<>();

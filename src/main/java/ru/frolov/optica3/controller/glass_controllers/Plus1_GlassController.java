@@ -7,10 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import ru.frolov.optica3.cache.frame_caches.Page_FrameCache;
 import ru.frolov.optica3.cache.glass_caches.Page_GlassCache;
-import ru.frolov.optica3.entity.frame.Frame;
-import ru.frolov.optica3.entity.frame.FrameContainer;
 import ru.frolov.optica3.entity.glass.Glass;
 import ru.frolov.optica3.entity.glass.GlassContainer;
 import ru.frolov.optica3.service.glass_services.Cache_GlassService;
@@ -53,6 +50,7 @@ public class Plus1_GlassController {
             newGlass.setDetails(xContainer.getDetails());
             newGlass.setPurchase(xContainer.getPurchase());
             newGlass.setSale(xContainer.getSale());
+            newGlass.setDioptre(xContainer.getDioptre());
 
             // Соединяем xContainer и newFrame
             newGlass.setGlassContainer(xContainer);
@@ -66,7 +64,7 @@ public class Plus1_GlassController {
         // ---------------------------->
         // page должна остаться того же номера и spec, но обновлена с учетом добавления
         int pageNumber = Page_GlassCache.getPage().getNumber();
-        Page<GlassContainer> actualPage = this.paginationService.createPageDependsOnSpecStatusAndCacheSpecStatus(pageNumber);
+        Page<GlassContainer> actualPage = this.paginationService.createPageDependsOnSpecStatus(pageNumber, null);
 
         // Отправка данных в модель
         // ------------------------>
@@ -75,6 +73,7 @@ public class Plus1_GlassController {
                 actualPage,
                 null,
                 xId,
+                null,
                 null);
 
         // Контрольное кэширование

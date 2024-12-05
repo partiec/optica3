@@ -4,12 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
-import ru.frolov.optica3.cache.frame_caches.*;
 import ru.frolov.optica3.cache.glass_caches.*;
+import ru.frolov.optica3.defaults.Dioptre;
 import ru.frolov.optica3.entity.glass.GlassContainer;
-import ru.frolov.optica3.enums.frames_enums.FrameInstallType;
-import ru.frolov.optica3.enums.frames_enums.FrameMaterial;
-import ru.frolov.optica3.enums.frames_enums.FrameUseType;
 import ru.frolov.optica3.enums.glass_enums.GlassCoat;
 import ru.frolov.optica3.enums.glass_enums.GlassDesign;
 import ru.frolov.optica3.enums.glass_enums.GlassMaterial;
@@ -26,13 +23,14 @@ public class Model_GlassService {
     private final Pagination_GlassService paginationService;
     private final GlassContainerService containerService;
     private final GlassService glassService;
-    private final Info_GlassService infoService;
+
 
     public void transferModel(Model model,
                               Page<GlassContainer> actualPage,
                               Integer pageNumberOnlyForFlip,
                               Long xId,
-                              String whichFieldOnInputOnlyForSearch) {
+                              String whichFieldOnInputOnlyForSearch,
+                              String copyToSearch) {
 
         // page
         Page<GlassContainer> page = null;
@@ -45,7 +43,8 @@ public class Model_GlassService {
                     pageNumberOnlyForFlip,
                     () -> Page_GlassCache.getPage().getNumber());
 
-            page = this.paginationService.createPageDependsOnSpecStatusAndCacheSpecStatus(pageNumber);
+            page = this.paginationService.createPageDependsOnSpecStatus(pageNumber, null);
+
         } else { // если пришла актуальная page, отправляем ее
             page = actualPage;
         }
@@ -55,7 +54,7 @@ public class Model_GlassService {
         Filters_GlassPayload filters = FiltersPayload_GlassCache.getFiltersPayload();
         model.addAttribute("filters", filters);
 
-        // framePayload вытаскиваем из кэша
+        // glassPayload вытаскиваем из кэша
         GlassPayload glassPayload = GlassPayloadCache.getGlassPayload();
         model.addAttribute("glassPayload", glassPayload);
 
@@ -70,9 +69,11 @@ public class Model_GlassService {
         long bdUnits = this.glassService.dbUnitsSize();
         model.addAttribute("dbUnits", bdUnits);
 
-        // найдено оправ
+        // found units
         if (SpecStatus_GlassCache.isApplied()) { // если bySpec
-            model.addAttribute("foundUnits", infoService.foundBySpecFrameUnits(filters));
+
+                model.addAttribute("foundUnits", this.glassService.foundUnitsSize(this.paginationService.getFoundContainers()));
+
         } else { // если noSpec
             model.addAttribute("foundUnits", bdUnits);
         }
@@ -94,5 +95,9 @@ public class Model_GlassService {
         model.addAttribute("designs", GlassDesign.values());
         model.addAttribute("coats", GlassCoat.values());
         //////////////////////////
+        model.addAttribute("dioptres", Dioptre.getDioptresStringList());
+        if (copyToSearch != null) {
+            model.addAttribute("copyToSearch", "copyToSearch");
+        }
     }
 }

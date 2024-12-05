@@ -39,7 +39,8 @@ public class NoSpec_FrameController {
                 actualPage,
                 null,
                 null,
-                 null);
+                 null,
+                null);
 
         // Контрольное кэширование
         // ----------------------->

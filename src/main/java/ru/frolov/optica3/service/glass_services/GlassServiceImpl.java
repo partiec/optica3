@@ -18,7 +18,7 @@ public class GlassServiceImpl implements GlassService {
 
 
     @Override
-    public long foundUnits(List<GlassContainer> foundContainers) {
+    public long foundUnitsSize(List<GlassContainer> foundContainers) {
         long result = 0;
         for (GlassContainer c : foundContainers) {
             result += c.getGlassList().size();

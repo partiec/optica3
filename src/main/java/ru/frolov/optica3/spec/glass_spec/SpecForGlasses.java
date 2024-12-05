@@ -2,15 +2,10 @@ package ru.frolov.optica3.spec.glass_spec;
 
 import lombok.experimental.UtilityClass;
 import org.springframework.data.jpa.domain.Specification;
-import ru.frolov.optica3.entity.frame.FrameContainer;
 import ru.frolov.optica3.entity.glass.GlassContainer;
-import ru.frolov.optica3.enums.frames_enums.FrameInstallType;
-import ru.frolov.optica3.enums.frames_enums.FrameMaterial;
-import ru.frolov.optica3.enums.frames_enums.FrameUseType;
 import ru.frolov.optica3.enums.glass_enums.GlassCoat;
 import ru.frolov.optica3.enums.glass_enums.GlassDesign;
 import ru.frolov.optica3.enums.glass_enums.GlassMaterial;
-import ru.frolov.optica3.payload.frame_payloads.Filters_FramePayload;
 import ru.frolov.optica3.payload.glass_payloads.Filters_GlassPayload;
 
 import java.math.BigDecimal;
@@ -18,7 +13,10 @@ import java.math.BigDecimal;
 @UtilityClass
 public class SpecForGlasses {
 
-    public Specification<GlassContainer> byAllFieldsContains(Filters_GlassPayload filters) {
+
+    public Specification<GlassContainer> byAllContains(Filters_GlassPayload filters) {
+
+        System.out.println(".....SpecForGlasses.byAllContains()... ");
 
         return Specification.where(
                 firmContains(filters.firm())
@@ -29,11 +27,16 @@ public class SpecForGlasses {
                         /////////////////////////////////////
                         .and(detailsContains(filters.details()))
                         .and(purchaseEqual(filters.purchase()))
-                        .and(saleEqual(filters.sale())));
+                        .and(saleEqual(filters.sale()))
+                        .and(dioptreLike(filters.dioptre())));
     }
 
+
     // by base fields
-    public Specification<GlassContainer> byAllFieldsLike(Filters_GlassPayload filters) {
+    public Specification<GlassContainer> byAllLike(Filters_GlassPayload filters) {
+
+        System.out.println(".....SpacForGlasses.byAllFieldsLike()...");
+
         return Specification.where(
                 firmLike(filters.firm())
                         /////////////////////////////////////
@@ -41,12 +44,15 @@ public class SpecForGlasses {
                         .and(designLike(filters.design()))
                         .and(coatLike(filters.coat()))
                         /////////////////////////////////////
-                        .and(detailsContains(filters.details()))
+                        .and(detailsLike(filters.details()))
                         .and(purchaseEqual(filters.purchase()))
-                        .and(saleEqual(filters.sale())));
+                        .and(saleEqual(filters.sale()))
+                        .and(dioptreLike(filters.dioptre())));
     }
 
     public Specification<GlassContainer> firmContains(String filter) {
+
+        System.out.println(".....SpacForGlasses.firmContains()...");
 
         return (root, query, criteriaBuilder) -> {
             if (filter == null) {
@@ -60,6 +66,8 @@ public class SpecForGlasses {
 
     public Specification<GlassContainer> firmLike(String filter) {
 
+        System.out.println(".....SpacForGlasses.firmLike()...");
+
         return (root, query, criteriaBuilder) -> {
             return criteriaBuilder.like(
                     criteriaBuilder.upper(root.get("firm")),
@@ -68,8 +76,9 @@ public class SpecForGlasses {
     }
 
 
-
     public Specification<GlassContainer> detailsContains(String filter) {
+
+        System.out.println(".....SpacForGlasses.detailsContains()...");
 
         return (root, query, criteriaBuilder) -> {
             if (filter == null) {
@@ -83,14 +92,18 @@ public class SpecForGlasses {
 
     public Specification<GlassContainer> detailsLike(String filter) {
 
+        System.out.println(".....SpacForGlasses.detailsLike()...");
+
         return (root, query, criteriaBuilder) -> {
             return criteriaBuilder.like(
-                    root.get("details"),
-                    filter);
+                    criteriaBuilder.upper(root.get("details")),
+                    filter.toUpperCase());
         };
     }
 
     public Specification<GlassContainer> purchaseEqual(BigDecimal filter) {
+
+        System.out.println(".....SpacForGlasses.purchaseEqual()...");
 
         return (root, query, criteriaBuilder) -> {
             if (filter == null) {
@@ -103,6 +116,8 @@ public class SpecForGlasses {
     }
 
     public Specification<GlassContainer> saleEqual(BigDecimal filter) {
+
+        System.out.println(".....SpacForGlasses.saleEqual()...");
 
         return (root, query, criteriaBuilder) -> {
             if (filter == null) {
@@ -119,6 +134,8 @@ public class SpecForGlasses {
 
     public Specification<GlassContainer> materialLike(GlassMaterial filter) {
 
+        System.out.println(".....SpacForGlasses.materialLike()...");
+
         return (root, query, criteriaBuilder) -> {
             if (filter == null) {
                 return criteriaBuilder.conjunction();
@@ -128,7 +145,10 @@ public class SpecForGlasses {
                     filter.toString());
         };
     }
+
     public Specification<GlassContainer> designLike(GlassDesign filter) {
+
+        System.out.println(".....SpacForGlasses.designLike()...");
 
         return (root, query, criteriaBuilder) -> {
             if (filter == null) {
@@ -142,6 +162,8 @@ public class SpecForGlasses {
 
     public Specification<GlassContainer> coatLike(GlassCoat filter) {
 
+        System.out.println(".....SpacForGlasses.coatLike()...");
+
         return (root, query, criteriaBuilder) -> {
             if (filter == null) {
                 return criteriaBuilder.conjunction();
@@ -152,4 +174,19 @@ public class SpecForGlasses {
         };
     }
     //////////////////////////////////////////////////////////////////////////////////////////////
+
+    public Specification<GlassContainer> dioptreLike(String filter) {
+
+        System.out.println(".....SpacForGlasses.dioptreLike()...");
+
+        return (root, query, criteriaBuilder) -> {
+            if (filter == null || !filter.matches("^[+-p_]\\S*")) {
+                return criteriaBuilder.conjunction();
+            }
+            return criteriaBuilder.like(
+                    root.get("dioptre"),
+                    filter);
+        };
+    }
+
 }

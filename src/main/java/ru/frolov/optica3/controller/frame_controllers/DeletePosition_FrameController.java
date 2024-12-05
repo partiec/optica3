@@ -54,6 +54,7 @@ public class DeletePosition_FrameController {
                 actualPage,
                 null,
                 xId,
+                null,
                 null);
 
         // Контрольное кэширование

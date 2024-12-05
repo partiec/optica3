@@ -101,8 +101,8 @@ public class SpecForFrames {
 
         return (root, query, criteriaBuilder) -> {
             return criteriaBuilder.like(
-                    root.get("details"),
-                    filter);
+                    criteriaBuilder.upper(root.get("details")),
+                    filter.toUpperCase());
         };
     }
 

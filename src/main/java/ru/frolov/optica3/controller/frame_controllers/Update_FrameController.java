@@ -107,6 +107,7 @@ public class Update_FrameController {
                 actualPage,
                 pageNumber,
                 xId,
+                null,
                 null);
 
         // Контрольное кэширование

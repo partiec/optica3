@@ -66,6 +66,7 @@ public class Minus1_FrameController {
                 actualPage,
                 null,
                 xId,
+                null,
                 null);
 
         // Контрольное кэширование

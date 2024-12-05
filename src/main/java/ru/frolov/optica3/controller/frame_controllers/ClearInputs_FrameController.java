@@ -41,6 +41,7 @@ public class ClearInputs_FrameController {
                 samePage,
                 null,
                 null,
+                null,
                 null);
 
         // Контрольное кэширование
