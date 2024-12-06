@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import ru.frolov.optica3.entity.frame.Frame;
 import ru.frolov.optica3.entity.frame.FrameContainer;
 import ru.frolov.optica3.payload.frame_payloads.Filters_FramePayload;
-import ru.frolov.optica3.repository.frame_repositories.FrameContainerRepository;
+import ru.frolov.optica3.repository.frame_repo.FrameContainerRepository;
 import ru.frolov.optica3.spec.frame_spec.SpecForFrames;
 
 import java.util.Iterator;

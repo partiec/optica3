@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import ru.frolov.optica3.cache.frame_caches.Page_FrameCache;
+import ru.frolov.optica3.cache.glass_cach.Page_GlassCache;
 import ru.frolov.optica3.entity.glass.GlassContainer;
 import ru.frolov.optica3.service.glass_services.*;
 
@@ -36,7 +36,7 @@ public class DeletePosition_GlassController {
         // ----------------------------->
         // page должна остаться с тем же номером и spec, но обновлена с учетом удаленного
         // pageNumber берем из кэша
-        int pageNumber = Page_FrameCache.getPage().getNumber();
+        int pageNumber = Page_GlassCache.getPage().getNumber();
 
         // метод создаст page в зависимости от specStatus
         Page<GlassContainer> actualPage =

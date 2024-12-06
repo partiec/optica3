@@ -13,12 +13,15 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
-import ru.frolov.optica3.cache.frame_caches.FiltersPayload_FrameCache;
-import ru.frolov.optica3.cache.frame_caches.Page_FrameCache;
-import ru.frolov.optica3.cache.frame_caches.SpecStatus_FrameCache;
+import ru.frolov.optica3.cache.frame_cach.FiltersPayload_FrameCache;
+import ru.frolov.optica3.cache.frame_cach.Page_FrameCache;
+import ru.frolov.optica3.cache.frame_cach.SpecStatus_FrameCache;
 import ru.frolov.optica3.defaults.Defaults;
 import ru.frolov.optica3.entity.frame.Frame;
 import ru.frolov.optica3.entity.frame.FrameContainer;
+import ru.frolov.optica3.enums.frames_enums.FrameInstallType;
+import ru.frolov.optica3.enums.frames_enums.FrameMaterial;
+import ru.frolov.optica3.enums.frames_enums.FrameUseType;
 import ru.frolov.optica3.payload.frame_payloads.Filters_FramePayload;
 import ru.frolov.optica3.service.frame_services.Cache_FrameService;
 import ru.frolov.optica3.service.frame_services.FrameContainerService;
@@ -67,9 +70,12 @@ public class Create_FrameController {
             xContainer.setFirm(filters.firm());
             xContainer.setModel(filters.model());
             ///////////////////////////////////////////
-            xContainer.setUseType(filters.useType());
-            xContainer.setInstallType(filters.installType());
-            xContainer.setMaterial(filters.material());
+            xContainer.setUseType(
+                    filters.useType() == null ? FrameUseType.NOT_SELECTED : filters.useType());
+            xContainer.setInstallType(
+                    filters.installType() == null ? FrameInstallType.NOT_SELECTED : filters.installType());
+            xContainer.setMaterial(
+                    filters.material() == null ? FrameMaterial.NOT_SELECTED : filters.material());
             ///////////////////////////////////////////
             xContainer.setDetails(filters.details());
             xContainer.setPurchase(filters.purchase());

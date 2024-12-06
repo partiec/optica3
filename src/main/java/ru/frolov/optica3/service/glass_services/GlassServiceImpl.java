@@ -2,10 +2,10 @@ package ru.frolov.optica3.service.glass_services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.frolov.optica3.entity.frame.FrameContainer;
+import ru.frolov.optica3.entity.contact.ContactContainer;
 import ru.frolov.optica3.entity.glass.GlassContainer;
-import ru.frolov.optica3.repository.glass_repositories.GlassRepository;
-import ru.frolov.optica3.service.frame_services.FrameContainerService;
+import ru.frolov.optica3.repository.glass_repo.GlassRepository;
+import ru.frolov.optica3.service.contact_services.ContactContainerService;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ import java.util.List;
 public class GlassServiceImpl implements GlassService {
 
     private final GlassRepository repository;
-    private final GlassContainerService containerService;
+    private final ContactContainerService containerService;
 
 
     @Override
@@ -29,8 +29,8 @@ public class GlassServiceImpl implements GlassService {
     public long dbUnitsSize() {
         // единиц товара в бд
         long result = 0;
-        for (GlassContainer c : this.containerService.all()) {
-            result += c.getGlassList().size();
+        for (ContactContainer c : this.containerService.all()) {
+            result += c.getContactList().size();
         }
         return result;
     }

@@ -13,12 +13,15 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
-import ru.frolov.optica3.cache.glass_caches.FiltersPayload_GlassCache;
-import ru.frolov.optica3.cache.glass_caches.Page_GlassCache;
-import ru.frolov.optica3.cache.glass_caches.SpecStatus_GlassCache;
+import ru.frolov.optica3.cache.glass_cach.FiltersPayload_GlassCache;
+import ru.frolov.optica3.cache.glass_cach.Page_GlassCache;
+import ru.frolov.optica3.cache.glass_cach.SpecStatus_GlassCache;
 import ru.frolov.optica3.defaults.Defaults;
 import ru.frolov.optica3.entity.glass.Glass;
 import ru.frolov.optica3.entity.glass.GlassContainer;
+import ru.frolov.optica3.enums.glass_enums.GlassCoat;
+import ru.frolov.optica3.enums.glass_enums.GlassDesign;
+import ru.frolov.optica3.enums.glass_enums.GlassMaterial;
 import ru.frolov.optica3.payload.glass_payloads.Filters_GlassPayload;
 import ru.frolov.optica3.service.glass_services.Cache_GlassService;
 import ru.frolov.optica3.service.glass_services.GlassContainerService;
@@ -53,14 +56,19 @@ public class Create_GlassController {
             xContainer = new GlassContainer();
             xContainer.setFirm(filters.firm());
             ///////////////////////////////////////////
-            xContainer.setMaterial(filters.material());
-            xContainer.setDesign(filters.design());
-            xContainer.setCoat(filters.coat());
+            xContainer.setMaterial(
+                    filters.material() == null ? GlassMaterial.NOT_SELECTED : filters.material());
+            xContainer.setDesign(
+                    filters.design() == null ? GlassDesign.NOT_SELECTED : filters.design());
+            xContainer.setCoat(
+                    filters.coat() == null ? GlassCoat.NOT_SELECTED : filters.coat());
             ///////////////////////////////////////////
             xContainer.setDetails(filters.details());
             xContainer.setPurchase(filters.purchase());
             xContainer.setSale(filters.sale());
-            xContainer.setDioptre(filters.dioptre());
+            xContainer.setDioptre(
+                    filters.dioptre() == null || !filters.dioptre().matches("^[+-p_]\\S*") ?
+                            "_" : filters.dioptre());
         } else {
             // если такой уже есть
             xContainer = dubls.get(0);

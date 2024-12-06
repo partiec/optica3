@@ -34,7 +34,15 @@ public class Start_GlassController {
         cacheService.cacheAttributes(
                 null,
                 null,
-                new Filters_GlassPayload(null, null, null, null, null, null, null, null),
+                new Filters_GlassPayload(
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null),
                 null);
 
 

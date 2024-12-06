@@ -4,14 +4,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
-import ru.frolov.optica3.cache.glass_caches.*;
+import ru.frolov.optica3.cache.glass_cach.*;
 import ru.frolov.optica3.defaults.Dioptre;
+import ru.frolov.optica3.entity.contact.ContactContainer;
 import ru.frolov.optica3.entity.glass.GlassContainer;
 import ru.frolov.optica3.enums.glass_enums.GlassCoat;
 import ru.frolov.optica3.enums.glass_enums.GlassDesign;
 import ru.frolov.optica3.enums.glass_enums.GlassMaterial;
 import ru.frolov.optica3.payload.glass_payloads.Filters_GlassPayload;
 import ru.frolov.optica3.payload.glass_payloads.GlassPayload;
+import ru.frolov.optica3.service.contact_services.ContactContainerService;
 
 import java.util.List;
 import java.util.Objects;
@@ -21,7 +23,7 @@ import java.util.Objects;
 public class Model_GlassService {
 
     private final Pagination_GlassService paginationService;
-    private final GlassContainerService containerService;
+    private final ContactContainerService containerService;
     private final GlassService glassService;
 
 
@@ -59,7 +61,7 @@ public class Model_GlassService {
         model.addAttribute("glassPayload", glassPayload);
 
         // всего позиций в бд
-        List<GlassContainer> dbAllContainers = this.containerService.all();
+        List<ContactContainer> dbAllContainers = this.containerService.all();
         model.addAttribute("dbPositions", dbAllContainers.size());
 
         // найдено позиций (берем из page)

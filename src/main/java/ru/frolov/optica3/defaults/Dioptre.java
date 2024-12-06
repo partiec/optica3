@@ -2,6 +2,7 @@ package ru.frolov.optica3.defaults;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.DoubleStream;
 
@@ -14,8 +15,8 @@ public class Dioptre {
         return dioptresStringList;
     }
 
-    private static ArrayList<String> createDioptresStringList() {
-        ArrayList<String> dioptresStringList = new ArrayList<>();
+    private static List<String> createDioptresStringList() {
+        List<String> dioptresStringList = new ArrayList<>();
 
         double[] doubles = DoubleStream.iterate(-20, operand -> operand <= 20, operand -> operand + 0.25).toArray();
 
@@ -26,6 +27,6 @@ public class Dioptre {
                 dioptresStringList.add(d > 0 ? "+" + d : "" + d);
         }
 
-        return dioptresStringList;
+        return  Collections.unmodifiableList(dioptresStringList);
     }
 }

@@ -6,6 +6,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import ru.frolov.optica3.enums.frames_enums.FrameInstallType;
+import ru.frolov.optica3.enums.frames_enums.FrameMaterial;
+import ru.frolov.optica3.enums.frames_enums.FrameUseType;
 import ru.frolov.optica3.payload.frame_payloads.Filters_FramePayload;
 import ru.frolov.optica3.service.frame_services.*;
 
@@ -34,7 +37,15 @@ public class Start_FrameController {
         cacheFrameService.cacheAttributes(
                 null,
                 null,
-                new Filters_FramePayload(null,null, null, null, null, null, null, null),
+                new Filters_FramePayload(
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null),
                 null);
 
 

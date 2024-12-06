@@ -3,7 +3,7 @@ package ru.frolov.optica3.service.frame_services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.frolov.optica3.entity.frame.FrameContainer;
-import ru.frolov.optica3.repository.frame_repositories.FrameRepository;
+import ru.frolov.optica3.repository.frame_repo.FrameRepository;
 
 import java.util.List;
 

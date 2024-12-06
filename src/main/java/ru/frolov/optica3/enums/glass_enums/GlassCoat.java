@@ -2,13 +2,18 @@ package ru.frolov.optica3.enums.glass_enums;
 
 public enum GlassCoat {
     NOT_SELECTED("_"),
-    HMC("HMC"),
+    WITHOUT("нет покр."),
+    HARD("Hard"),
     ANTI_REFLECTION("антирефлекс."),
+    HMC("HMC"),
     ANTI_STATIC("антистатич."),
     ANTI_WATER("водоотталк."),
     OLEOPHOBIC("грязеотталк."),
     FILTER("фильтр"),
-    POLARIZED("поляризац.");
+    POLARIZED("поляризац."),
+    PHOTOCHROMIC("фотохром"),
+    TINTED("тонир."),
+    DRIVER("вожден.");
 
     private String str;
 

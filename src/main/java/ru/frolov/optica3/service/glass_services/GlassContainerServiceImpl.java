@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import ru.frolov.optica3.entity.glass.Glass;
 import ru.frolov.optica3.entity.glass.GlassContainer;
 import ru.frolov.optica3.payload.glass_payloads.Filters_GlassPayload;
-import ru.frolov.optica3.repository.glass_repositories.GlassContainerRepository;
+import ru.frolov.optica3.repository.glass_repo.GlassContainerRepository;
 import ru.frolov.optica3.spec.glass_spec.SpecForGlasses;
 
 import java.util.Iterator;
