@@ -12,29 +12,28 @@
 <div data-th-insert="~{fragments :: optica}" class="optica"></div>
 
 <!-- fragment 'left_menu' from fragments.html -->
-<div data-th-insert="~{fragments :: left_menu}" class="leftMenu"></div>
+<div data-th-insert="~{fragments :: left_menu}" class="mainMenu"></div>
 
 
 <!-- search-->
-<div class="search">
+<div class="glass_search_block">
 
     <h2>
         Очковые линзы:
     </h2>
     <hr>
 
-    <form onkeydown="return event.key != 'Enter';" method="post" data-th-action="@{/api/searchGlasses}">
+    <form onkeydown="return event.key != 'Enter';" method="post" data-th-action="@{/api/glass/search}">
         <input id="whichFieldOnInput_id" type="hidden" name="whichFieldOnInput">
-        <span>Начните вводить для автоматического поиска:</span>&nbsp;
-        <button type="submit" data-th-formaction="@{/api/noSpecGlasses}">Найти все</button>
+        <span>Поиск (начните вводить):</span>&nbsp;
 
         <table>
-            <tbody>
             <tr>
                 <!-- галочка (если фильтры копированы из таблицы) -->
                 <td>
                     <span data-th-if="${copyToSearch}">&#9989;</span>
                 </td>
+
                 <!-- |Фирма|  -->
                 <td>
                     <input data-th-if="${whichFieldOnInput == 'firm'} " autofocus
@@ -49,20 +48,34 @@
                            name="firm" data-th-value="${filters.firm}">
                 </td>
 
+                <!-- |Модель| -->
+                <td>
+                    <input data-th-if="${whichFieldOnInput == 'model'}" autofocus
+                           onfocus="this.selectionStart = this.selectionEnd = this.value.length"
+                           oninput=" document.getElementById('whichFieldOnInput_id').value='model'; this.form.submit();"
+                           type="text" placeholder="Модель*"
+                           name="model" data-th-value="${filters.model}">
+                    <input data-th-unless="${whichFieldOnInput == 'model'}"
+                           onfocus="this.selectionStart = this.selectionEnd = this.value.length"
+                           oninput="document.getElementById('whichFieldOnInput_id').value='model'; this.form.submit();"
+                           type="text" placeholder="Модель*"
+                           name="model" data-th-value="${filters.model}">
+                </td>
+
                 <!-- ///////////////////////////////////////////////////////////////////////////////////// -->
                 <!-- |материал| -->
                 <td>
-                    <select onchange="this.form.submit()" name="material">
+                    <select onchange="this.form.submit()" name="glassMaterial">
                         <option value="">Материал</option>
                         <option
-                                data-th-each="material : ${materials}"
-                                data-th-if="${material == filters.material}" selected
+                                data-th-each="material : ${glassMaterials}"
+                                data-th-if="${material == filters.glassMaterial}" selected
                                 data-th-value="${material}"
                                 data-th-text="${material.str}">
                         </option>
                         <option
-                                data-th-each="material : ${materials}"
-                                data-th-unless="${material == filters.material}"
+                                data-th-each="material : ${glassMaterials}"
+                                data-th-unless="${material == filters.glassMaterial}"
                                 data-th-value="${material}"
                                 data-th-text="${material.str}">
                         </option>
@@ -72,17 +85,17 @@
 
                 <!-- |дизайн| -->
                 <td>
-                    <select onchange="this.form.submit()" name="design">
+                    <select onchange="this.form.submit()" name="glassDesign">
                         <option value="">Дизайн</option>
                         <option
-                                data-th-each="d : ${designs}"
-                                data-th-if="${d == filters.design}" selected
+                                data-th-each="d : ${glassDesigns}"
+                                data-th-if="${d == filters.glassDesign}" selected
                                 data-th-value="${d}"
                                 data-th-text="${d.str}">
                         </option>
                         <option
-                                data-th-each="d : ${designs}"
-                                data-th-unless="${d == filters.design}"
+                                data-th-each="d : ${glassDesigns}"
+                                data-th-unless="${d == filters.glassDesign}"
                                 data-th-value="${d}"
                                 data-th-text="${d.str}">
                         </option>
@@ -92,17 +105,17 @@
 
                 <!-- |покрытие| -->
                 <td>
-                    <select onchange="this.form.submit()" name="coat">
+                    <select onchange="this.form.submit()" name="glassCoat">
                         <option value="">Покрытие</option>
                         <option
-                                data-th-each="c : ${coats}"
-                                data-th-if="${c == filters.coat}" selected
+                                data-th-each="c : ${glassCoats}"
+                                data-th-if="${c == filters.glassCoat}" selected
                                 data-th-value="${c}"
                                 data-th-text="${c.str}">
                         </option>
                         <option
-                                data-th-each="c : ${coats}"
-                                data-th-unless="${c == filters.coat}"
+                                data-th-each="c : ${glassCoats}"
+                                data-th-unless="${c == filters.glassCoat}"
                                 data-th-value="${c}"
                                 data-th-text="${c.str}">
                         </option>
@@ -137,8 +150,8 @@
                 <!--////////////-->
                 <!-- |диоптрия| -->
                 <td>
-                    <select  name="dioptre"
-                             onchange="document.getElementById('whichFieldOnInput_id').value='dioptre';this.form.submit();">
+                    <select name="dioptre"
+                            onchange="document.getElementById('whichFieldOnInput_id').value='dioptre';this.form.submit();">
                         <option value="">Диоптрия</option>
                         <option
                                 data-th-each="d : ${dioptres}"
@@ -156,21 +169,13 @@
                     <input type="hidden"/>
                 </td>
                 <!--////////////-->
-
-                <td>
-                    <button type="submit" formaction="/api/clearGlassInputs">Очистить</button>
-                </td>
-                <td>
-                    <button type="submit">Найти</button>
-                </td>
             </tr>
-
-            </tbody>
         </table>
 
-        <td colspan="2">
-            <button type="submit" formaction="/api/createGlass">Создать по введенным данным</button>
-        </td>
+        <button type="submit" formaction="/api/glass/clearInputs">Очистить</button>
+        <button type="submit">Найти</button>
+        <button type="submit" data-th-formaction="@{/api/glass/noSpec}">Найти все</button>
+        <button type="submit" formaction="/api/glass/create">Создать</button>
     </form>
 
     <div data-th-if="${errors}">
@@ -189,20 +194,21 @@
 
 <br>
 
-<div class="search_result">
+<div class="glass_search_result">
 
 
     <!-- 1. -->
     <!--    edit table-->
 
 
-    <div data-th-if="${editMode}" id="edit_table_div">
+    <div data-th-if="${editMode}" id="glass_edit_table">
         <hr color="red">
         <table>
             <thead>
             <tr>
                 <th align="left">№</th>
                 <th align="left">Фирма</th>
+                <th align="left">Модель</th>
                 <th align="left">Материал</th>
                 <th align="left">Дизайн</th>
                 <th align="left">Покрытие</th>
@@ -221,153 +227,166 @@
 
             <tbody>
             <tr data-th-each="container : ${page.getContent()}">
+
                 <!-- № и галочка-->
                 <td width="80">
-                    <div data-th-if="${container.id == xId}">
+                    <div data-th-if="${container.id == xContainerId}">
                         <span data-th-if="${sameContainerAlreadyExists}"
                               data-th-text="${containerStat.count} +  ' &#9989;(+1)'"></span>
                         <span data-th-unless="${sameContainerAlreadyExists}"
                               data-th-text="${containerStat.count} +  ' &#9989;'"></span>
                     </div>
-                    <div data-th-unless="${container.id == xId}">
+                    <div data-th-unless="${container.id == xContainerId}">
                         <span data-th-text="${containerStat.count} + '  '"></span>
                     </div>
                 </td>
 
                 <td width="100"><!-- firm -->
-                    <form method="post" data-th-action="@{/api/updateGlass}">
+                    <form method="post" data-th-action="@{/api/glass/update}">
                         <input onblur=this.form.submit()
                                type="text"
                                data-th-name="firm"
                                data-th-value="${container.firm}">
-                        <input type="hidden" name="xId" data-th-value="${container.id}">
+                        <input type="hidden" name="xContainerId" data-th-value="${container.id}">
+                    </form>
+                </td>
+
+                <td width="100"><!-- model -->
+                    <form method="post" data-th-action="@{/api/glass/update}">
+                        <input onblur=this.form.submit()
+                               type="text"
+                               data-th-name="model"
+                               data-th-value="${container.model}">
+                        <input type="hidden" name="xContainerId" data-th-value="${container.id}">
                     </form>
                 </td>
 
                 <!-- //////////////////////////////////////////////////////////////////////////////////////////////////////// -->
                 <td width="100"><!-- материал -->
-                    <form method="post" data-th-action="@{/api/updateGlass}">
-                        <select onchange="this.form.submit()" name="material">
+                    <form method="post" data-th-action="@{/api/glass/update}">
+                        <select onchange="this.form.submit()" name="glassMaterial">
                             <option
-                                    data-th-each="material : ${materials}"
-                                    data-th-if="${material == container.material}" selected
+                                    data-th-each="material : ${glassMaterials}"
+                                    data-th-if="${material == container.glassMaterial}" selected
                                     data-th-value="${material}"
                                     data-th-text="${material.str}">
                             </option>
                             <option
-                                    data-th-each="material : ${materials}"
-                                    data-th-unless="${material == container.material}"
+                                    data-th-each="material : ${glassMaterials}"
+                                    data-th-unless="${material == container.glassMaterial}"
                                     data-th-value="${material}"
                                     data-th-text="${material.str}">
                             </option>
                         </select>
                         <input type="hidden"/>
-                        <input type="hidden" name="xId" data-th-value="${container.id}">
+                        <input type="hidden" name="xContainerId" data-th-value="${container.id}">
                     </form>
                 </td>
+
                 <td width="100"><!-- дизайн -->
-                    <form method="post" data-th-action="@{/api/updateGlass}">
-                        <select onchange="this.form.submit()" name="design">
+                    <form method="post" data-th-action="@{/api/glass/update}">
+                        <select onchange="this.form.submit()" name="glassDesign">
                             <option
-                                    data-th-each="d : ${designs}"
-                                    data-th-if="${d == container.design}" selected
+                                    data-th-each="d : ${glassDesigns}"
+                                    data-th-if="${d == container.glassDesign}" selected
                                     data-th-value="${d}"
                                     data-th-text="${d.str}">
                             </option>
                             <option
-                                    data-th-each="d : ${designs}"
-                                    data-th-unless="${d == container.design}"
+                                    data-th-each="d : ${glassDesigns}"
+                                    data-th-unless="${d == container.glassDesign}"
                                     data-th-value="${d}"
                                     data-th-text="${d.str}">
                             </option>
                         </select>
                         <input type="hidden"/>
-                        <input type="hidden" name="xId" data-th-value="${container.id}">
+                        <input type="hidden" name="xContainerId" data-th-value="${container.id}">
                     </form>
                 </td>
-                <td width="100"><!-- тип монтажа -->
-                    <form method="post" data-th-action="@{/api/updateGlass}">
-                        <select onchange="this.form.submit()" name="coat">
+
+                <td width="100"><!-- покрытие -->
+                    <form method="post" data-th-action="@{/api/glass/update}">
+                        <select onchange="this.form.submit()" name="glassCoat">
                             <option
-                                    data-th-each="c : ${coats}"
-                                    data-th-if="${c == container.coat}" selected
+                                    data-th-each="c : ${glassCoats}"
+                                    data-th-if="${c == container.glassCoat}" selected
                                     data-th-value="${c}"
                                     data-th-text="${c.str}">
                             </option>
                             <option
-                                    data-th-each="c : ${coats}"
-                                    data-th-unless="${c == container.coat}"
+                                    data-th-each="c : ${glassCoats}"
+                                    data-th-unless="${c == container.glassCoat}"
                                     data-th-value="${c}"
                                     data-th-text="${c.str}">
                             </option>
                         </select>
                         <input type="hidden"/>
-                        <input type="hidden" name="xId" data-th-value="${container.id}">
+                        <input type="hidden" name="xContainerId" data-th-value="${container.id}">
                     </form>
                 </td>
                 <!-- //////////////////////////////////////////////////////////////////////////////////////////////////////// -->
 
                 <td width="100"><!-- details -->
-                    <form method="post" data-th-action="@{/api/updateGlass}">
+                    <form method="post" data-th-action="@{/api/glass/update}">
                         <input onblur=this.form.submit()
                                type="text"
                                data-th-name="details"
                                data-th-value="${container.details}">
-                        <input type="hidden" name="xId" data-th-value="${container.id}">
+                        <input type="hidden" name="xContainerId" data-th-value="${container.id}">
                     </form>
                 </td>
 
                 <td width="100"><!-- purchase -->
-                    <form method="post" data-th-action="@{/api/updateGlass}">
+                    <form method="post" data-th-action="@{/api/glass/update}">
                         <input onblur=this.form.submit()
                                type="number"
                                data-th-name="purchase"
                                data-th-value="${container.purchase}">
-                        <input type="hidden" name="xId" data-th-value="${container.id}">
+                        <input type="hidden" name="xContainerId" data-th-value="${container.id}">
                     </form>
                 </td>
 
                 <td width="100"><!-- sale -->
-                    <form method="post" data-th-action="@{/api/updateGlass}">
+                    <form method="post" data-th-action="@{/api/glass/update}">
                         <input onblur=this.form.submit()
                                type="number"
                                data-th-name="sale"
                                data-th-value="${container.sale}">
-                        <input type="hidden" name="xId" data-th-value="${container.id}">
+                        <input type="hidden" name="xContainerId" data-th-value="${container.id}">
                     </form>
                 </td>
 
                 <!--////////////////-->
                 <td width="100"><!-- диоптрия -->
-                    <form method="post" data-th-action="@{/api/updateGlass}">
+                    <form method="post" data-th-action="@{/api/glass/update}">
                         <select onchange="this.form.submit()" name="dioptre">
                             <option
-                                    data-th-each="d : ${dioptres}"
-                                    data-th-if="${d == container.dioptre}" selected
-                                    data-th-value="${d}"
-                                    data-th-text="${d}">
+                                    data-th-each="dioptre : ${dioptres}"
+                                    data-th-if="${dioptre == container.dioptre}" selected
+                                    data-th-value="${dioptre}"
+                                    data-th-text="${dioptre}">
                             </option>
                             <option
-                                    data-th-each="d : ${dioptres}"
-                                    data-th-unless="${d == container.dioptre}"
-                                    data-th-value="${d}"
-                                    data-th-text="${d}">
+                                    data-th-each="dioptre : ${dioptres}"
+                                    data-th-unless="${dioptre == container.dioptre}"
+                                    data-th-value="${dioptre}"
+                                    data-th-text="${dioptre}">
                             </option>
                         </select>
                         <input type="hidden"/>
-                        <input type="hidden" name="xId" data-th-value="${container.id}">
+                        <input type="hidden" name="xContainerId" data-th-value="${container.id}">
                     </form>
                 </td>
                 <!--////////////////-->
 
                 <td width="100" align="center"><!-- Колличество (шт.) -->
-                    <span data-th-text="${#lists.size(container.glassList)}"></span>
+                    <span data-th-text="${#lists.size(container.unitList)}"></span>
                 </td>
 
                 <!-- +1 -->
                 <td>
-                    <form method="post" data-th-action="@{/api/plus1Glass}">
-                        <input type="hidden" name="xId" data-th-value="${container.id}">
+                    <form method="post" data-th-action="@{/api/glass/plus1}">
+                        <input type="hidden" name="xContainerId" data-th-value="${container.id}">
                         <input type="hidden" name="pageNumber" data-th-value="${pageNumber}">
                         <input type="submit" value="+1">
                     </form>
@@ -375,8 +394,8 @@
 
                 <!-- -1 -->
                 <td>
-                    <form method="post" data-th-action="@{/api/minus1Glass}">
-                        <input type="hidden" name="xId" data-th-value="${container.id}">
+                    <form method="post" data-th-action="@{/api/glass/minus1}">
+                        <input type="hidden" name="xContainerId" data-th-value="${container.id}">
                         <input type="hidden" name="pageNumber" data-th-value="${pageNumber}">
                         <input type="submit" value="-1">
                     </form>
@@ -384,24 +403,26 @@
 
                 <!-- Удалить позицию-->
                 <td>
-                    <form method="post" data-th-action="@{/api/deleteGlassPosition}">
-                        <input type="hidden" name="xId" data-th-value="${container.id}">
+                    <form method="post" data-th-action="@{/api/glass/deletePosition}">
+                        <input type="hidden" name="xContainerId" data-th-value="${container.id}">
                         <input type="submit" value="Удалить позицию">
                     </form>
                 </td>
 
                 <!-- Копировать в поиск -->
                 <td>
-                    <form method="post" data-th-action="@{/api/copyToSearchGlasses}">
-                        <input type="hidden" name="xId" data-th-value="${container.id}">
+                    <form method="post" data-th-action="@{/api/glass/copyToSearch}">
+                        <input type="hidden" name="xContainerId" data-th-value="${container.id}">
                         <input type="submit" value="Копир. в поиск">
                     </form>
                 </td>
 
                 <!-- В ЗАКАЗ -->
                 <td>
-                    <form method="post" data-th-action="@{/api/toOrder}">
-                        <input type="submit" value="В ЗАКАЗ">
+                    <form method="post" data-th-action="@{/api/glass/toOrder}">
+                        <input type="hidden" name="xContainerId" data-th-value="${container.id}">
+                        <input data-th-if="${currentOrder}" type="submit" data-th-value="'В заказ (&#9203; №' + ${currentOrder.getId()} + ')'">
+                        <input data-th-unless="${currentOrder}" type="submit" value="В текущий заказ (не выбран)">
                     </form>
                 </td>
 
@@ -414,13 +435,14 @@
     <!-- 2.  -->
     <!--    no edit table -->
 
-    <div data-th-unless="${editMode}" id="no_edit_table">
+    <div data-th-unless="${editMode}" id="glass_no_edit_table">
         <hr>
         <table>
             <thead>
             <tr>
                 <th align="left">№</th>
                 <th align="left">Фирма</th>
+                <th align="left">Модель</th>
                 <th align="left">Материал</th>
                 <th align="left">Дизайн</th>
                 <th align="left">Покрытие</th>
@@ -454,34 +476,40 @@
                 <td></td>
             </tr>
             <tr data-th-each="container : ${page.getContent()}">
+
                 <!-- № и галочка-->
                 <td width="80" align="left">
-                    <div data-th-if="${container.id == xId}">
+                    <div data-th-if="${container.id == xContainerId}">
                         <span data-th-if="${sameContainerAlreadyExists}"
                               data-th-text="${containerStat.count} +  ' &#9989;(+1)'"></span>
                         <span data-th-unless="${sameContainerAlreadyExists}"
                               data-th-text="${containerStat.count} +  ' &#9989;'"></span>
                     </div>
-                    <div data-th-unless="${container.id == xId}">
+                    <div data-th-unless="${container.id == xContainerId}">
                         <span data-th-text="${containerStat.count} + '  '"></span>
                     </div>
                 </td>
+
 
                 <td width="150" align="left"><!-- firm -->
                     <label data-th-text="${container.firm}">*фирма*</label>
                 </td>
 
+                <td width="150" align="left"><!-- model -->
+                    <label data-th-text="${container.model}">*model*</label>
+                </td>
+
                 <!-- //////////////////////////////////////////////////////////////////////////////////////////////////////// -->
                 <td width="150" align="left"><!-- материал -->
-                    <label data-th-text="${container.getMaterial() == null ? null : container.getMaterial().getStr()}"></label>
+                    <label data-th-text="${container.getGlassMaterial() == null ? null : container.getGlassMaterial().getStr()}"></label>
                 </td>
 
                 <td width="150" align="left"><!-- дизайн -->
-                    <label data-th-text="${container.getDesign() == null ? null : container.getDesign().getStr()}"></label>
+                    <label data-th-text="${container.getGlassDesign() == null ? null : container.getGlassDesign().getStr()}"></label>
                 </td>
 
                 <td width="150" align="left"><!-- покрытие -->
-                    <label data-th-text="${container.getCoat() == null ? null : container.getCoat().getStr()}"></label>
+                    <label data-th-text="${container.getGlassCoat() == null ? null : container.getGlassCoat().getStr()}"></label>
                 </td>
 
                 <!-- //////////////////////////////////////////////////////////////////////////////////////////////////////// -->
@@ -503,21 +531,23 @@
                 </td>
 
                 <td align="left"><!-- Колличество (шт.) -->
-                    <span data-th-text="${#lists.size(container.glassList)}"></span>
+                    <span data-th-text="${#lists.size(container.unitList)}"></span>
                 </td>
 
                 <!-- Копировать в поиск -->
                 <td>
-                    <form method="post" data-th-action="@{/api/copyToSearchGlasses}">
-                        <input type="hidden" name="xId" data-th-value="${container.id}">
+                    <form method="post" data-th-action="@{/api/glass/copyToSearch}">
+                        <input type="hidden" name="xContainerId" data-th-value="${container.id}">
                         <input type="submit" value="Копир. в поиск">
                     </form>
                 </td>
 
                 <!-- В ЗАКАЗ -->
                 <td>
-                    <form method="post" data-th-action="@{/api/toOrder}">
-                        <input type="submit" value="В ЗАКАЗ">
+                    <form method="post" data-th-action="@{/api/glass/toOrder}">
+                        <input type="hidden" name="xContainerId" data-th-value="${container.id}">
+                        <input data-th-if="${currentOrder}" type="submit" data-th-value="'В заказ (&#9203; №' + ${currentOrder.getId()} + ')'">
+                        <input data-th-unless="${currentOrder}" type="submit" value="В текущий заказ (не выбран)">
                     </form>
                 </td>
             </tr>
@@ -526,55 +556,74 @@
         <hr>
     </div>
     <br>
+
     <!-- info -->
-    <label>
-        <span data-th-if="${message_itsFullList}">Полный список:  </span>
-        <span data-th-unless="${message_itsFullList}">Найдены совпадения:  </span>&nbsp;&nbsp;
-        <span data-th-if="${page.getTotalPages() > 0}">cтраницa <span data-th-text="${page.getNumber() + 1}"></span> (из <span
-                data-th-text="${page.getTotalPages()}"></span>)</span>&nbsp;&nbsp;&nbsp;&nbsp;
-        <span data-th-unless="${page.getTotalPages() > 0}">НЕТ СОВПАДЕНИЙ</span>&nbsp;&nbsp;&nbsp;&nbsp;
-        позиций: <span data-th-text="${foundPositions}"></span> (из <span
-            data-th-text="${dbPositions}"></span>) &nbsp;&nbsp;&nbsp;&nbsp;
-        единиц товара: <span data-th-text="${foundUnits}"></span> (из <span
-            data-th-text="${dbUnits}"></span>) &nbsp;
-    </label>&nbsp;&nbsp;&nbsp;&nbsp;
+    <!-- info -->
+    <!-- info -->
+    <!-- info -->
+    <div class="glass_info_block">
+        <label>
+            <!-- полный список/найдены совпадения-->
+            <span data-th-if="${message_itsFullList}">Полный список:  </span>
+            <span data-th-unless="${message_itsFullList}">Найдены совпадения:  </span>&nbsp;&nbsp;
 
-    <!-- <- 1 2 3 4 5 -> -->
-    <!-- имеет ли смысл вообще показывать про страницы -->
-    <div data-th-if="${foundPositions} and ${foundPositions > 0}">
+            <!-- позиций: ... (из: ...)-->
+            позиций: <span data-th-text="${foundPositions}"></span>
+            (из <span data-th-text="${dbPositions}"></span>) &nbsp;&nbsp;&nbsp;&nbsp;
 
-        <!-- Назад    -->
-        <a data-th-if="${page.getNumber() > 0}"
-           data-th-href="@{'/api/flipGlassPage/' + ${page.getNumber() - 1}}">&#9668;</a>&nbsp;
-        <label data-th-unless="${page.getNumber() > 0}">&#9668;</label>&nbsp;
+            <!-- единиц товара: ... (из: ...)-->
+            единиц товара: <span data-th-text="${foundUnits}"></span>
+            (из <span data-th-text="${dbUnits}"></span>) &nbsp;
 
-        <!-- Цифры    -->
-        <span data-th-each="i : ${#numbers.sequence(0, page.getTotalPages() - 1)}">
+            <!-- страница ... (из ...)/нет совпадений-->
+            <span data-th-if="${page.getTotalPages() > 0}">
+            cтраницa <span data-th-text="${page.getNumber() + 1}"></span>
+            (из <span data-th-text="${page.getTotalPages()}"></span>)</span>&nbsp;&nbsp;&nbsp;&nbsp;
+            <span data-th-unless="${page.getTotalPages() > 0}">НЕТ СОВПАДЕНИЙ</span>&nbsp;&nbsp;&nbsp;&nbsp;
+        </label>&nbsp;&nbsp;&nbsp;&nbsp;
+
+        <!-- <- 1 2 3 4 5 -> -->
+        <!-- имеет ли смысл вообще показывать про страницы -->
+        <div data-th-if="${foundPositions} and ${foundPositions > 0}">
+
+            <!-- Назад    -->
+            <a data-th-if="${page.getNumber() > 0}"
+               data-th-href="@{'/api/glass/flipPage/' + ${page.getNumber() - 1}}">&#9668;</a>&nbsp;
+            <label data-th-unless="${page.getNumber() > 0}">&#9668;</label>&nbsp;
+
+            <!-- Цифры    -->
+            <span data-th-each="i : ${#numbers.sequence(0, page.getTotalPages() - 1)}">
                 <a data-th-if="${i != page.getNumber()}"
-                   data-th-href="@{'/api/flipGlassPage/' + ${i}}">[[${i + 1}]]</a>
+                   data-th-href="@{'/api/glass/flipPage/' + ${i}}">[[${i + 1}]]</a>
                 <span data-th-unless="${i != page.getNumber()}" class="currentPage">[[${i + 1}]]</span>
             </span>&nbsp;
 
-        <!--  Вперед -->
-        <a data-th-if="${page.getNumber() < (page.getTotalPages() - 1)}"
-           data-th-href="@{'/api/flipGlassPage/' + ${page.getNumber() + 1} }">&#9658;</a>
-        <label data-th-unless="${page.getNumber() < (page.getTotalPages() - 1)}">&#9658;</label>
+            <!--  Вперед -->
+            <a data-th-if="${page.getNumber() < (page.getTotalPages() - 1)}"
+               data-th-href="@{'/api/glass/flipPage/' + ${page.getNumber() + 1} }">&#9658;</a>
+            <label data-th-unless="${page.getNumber() < (page.getTotalPages() - 1)}">&#9658;</label>
 
-        <br><br>
+            <br><br>
 
-        <hr>
-        <!-- включить редактирование-->
-        <form data-th-unless="${editMode}" method="get" data-th-action="@{/api/editGlass_on}">
-            <input type="submit" value="Включить редактирование">
-        </form>&nbsp;
-        <form data-th-if="${editMode}" method="get" data-th-action="@{/api/editGlass_off}">
-            <span color="red">Внимание! Включен режим редактирования. Любые внесенные изменения сохраняются.</span>
-            <hr color="red">
-            <input type="submit" value="Выключить редактирование">
-        </form>
+            <hr>
+            <!-- включить редактирование-->
+            <form data-th-unless="${editMode}" method="get" data-th-action="@{/api/glass/editMode_on}">
+                <input type="submit" value="Включить редактирование">
+            </form>&nbsp;
+            <form data-th-if="${editMode}" method="get" data-th-action="@{/api/glass/editMode_off}">
+                <span color="red">Внимание! Включен режим редактирования. Любые внесенные изменения сохраняются.</span>
+                <hr color="red">
+                <input type="submit" value="Выключить редактирование">
+            </form>
 
+            <!-- текущий заказ -->
+            <div >
+                <span data-th-if="${currentOrder != null}" data-th-text="'Текущий заказ: &#9203; № ' + ${currentOrder.getId()}"></span>
+                <label data-th-if="${currentOrder == null}">Текущий заказ не выбран</label>
+            </div>
+
+        </div>
     </div>
-
 </div>
 <br>
 <br>

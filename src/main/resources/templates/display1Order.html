@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>Order Includes</title>
+    <link rel="stylesheet" data-th-href="@{/css/orders.css}">
+    <script src="js/jsFrame.js"></script>
+</head>
+<body>
+<!-- fragment 'optica' from fragments.html -->
+<div data-th-insert="~{fragments :: optica}" class="optica"></div>
+
+<!-- fragment 'left_menu' from fragments.html -->
+<div data-th-insert="~{fragments :: left_menu}" class="mainMenu"></div>
+
+<!-- текущий?-->
+<div>
+    <span data-th-if="${order.getCurrent()}">&#9203;<!-- песоч --> Этот заказ выбран как текущий.</span>
+    <span data-th-unless="${order.getCurrent()}">Этот заказ не является текущим</span>
+</div>
+<br><br>
+
+<!-- № (создан) -->
+<div>
+    <span data-th-text="'Заказ №' + ${order.getId()} +'    (создан ' +${order.getFormattedCreatedAt()} + ');'"></span>
+</div>
+<br>
+<!-- Находится на стадии -->
+<div>
+    <span data-th-text="'Находится на стадии: ' +${order.getStage().getStr()}"></span>
+</div>
+<br>
+<!-- Статус оплаты -->
+<div>
+    <span data-th-text="'Статус оплаты: ' + ${order.getPayment().getStr()}"></span>
+</div>
+<br>
+<br>
+<!-- фио -->
+<div>
+    <span data-th-text="
+    'Пациент: ' +
+    ${order.getLastName()} + ' ' +
+    ${order.getFirstName()} + ' ' +
+    ${order.getPatronymic()} + '; '
+    "></span>
+</div>
+<br>
+<!-- др -->
+<div>
+    <span data-th-text="'Дата рожд.: ' +${#temporals.format(order.birthday, 'dd.MM.yyyy')}"></span>
+</div><br>
+<!--  паспорт -->
+<div>
+    <span data-th-text="'Паспорт:' +${order.getPassport()}"></span>
+</div><br>
+<!--  Доп. информация -->
+<div>
+    <span data-th-text="'Доп. информация: ' +${order.getClientDetails}"></span>
+</div><br>
+
+
+<br>
+<!--аксессуары -->
+<!--<span data-th-text="'размер getAccessoryUnits()=' + ${#lists.size(order.getAccessoryUnits())}"></span>-->
+<div data-th-if="${#lists.size(order.getAccessoryUnits()) > 0}" data-th-each="accessory : ${order.getAccessoryUnits()}">
+    <label>Аксессуары:</label>
+    <span data-th-text="${accessory.getAccessoryCategory().getStr()}"></span>
+    <span data-th-text="${accessory.getFirm()}"></span>
+    <span data-th-text="${accessory.getModel()}"></span>
+</div>
+<br>
+<!--контактные линзы -->
+<!--<span data-th-text="'размер getContactUnits()=' + ${#lists.size(order.getContactUnits())}"></span>-->
+<div data-th-if="${#lists.size(order.getContactUnits()) > 0}" data-th-each="contact : ${order.getContactUnits()}">
+    <label>Контактные линзы:</label>
+    <span data-th-text="${сontact.getContactCategory().getStr()}"></span>
+    <span data-th-text="${сontact.getFirm()}"></span>
+    <span data-th-text="${сontact.getModel()}"></span>
+</div>
+<br>
+<!--оправы -->
+<!--<span data-th-text="'размер getFrameUnits()=' + ${#lists.size(order.getFrameUnits())}"></span>-->
+<div data-th-if="${#lists.size(order.getFrameUnits()) > 0}" data-th-each="frame : ${order.getFrameUnits()}">
+    <label>Оправы:</label>
+    <span data-th-text="${frame.getFrameCategory().getStr()}"></span>
+    <span data-th-text="${frame.getFirm()}"></span>
+    <span data-th-text="${frame.getModel()}"></span>
+</div>
+<br>
+<!--очковые линзы -->
+<!--<span data-th-text="'размер getGlassUnits()=' + ${#lists.size(order.getGlassUnits())}"></span>-->
+<div data-th-if="${#lists.size(order.getGlassUnits()) > 0}" data-th-each="glass : ${order.getGlassUnits()}">
+    <label>Очковые линзы:</label>
+    <span data-th-text="${glass.getGlassCategory().getStr()}"></span>
+    <span data-th-text="${glass.getFirm()}"></span>
+    <span data-th-text="${glass.getModel()}"></span>
+</div>
+<br>
+</body>
+</html>
+

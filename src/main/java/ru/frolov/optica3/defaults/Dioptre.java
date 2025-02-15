@@ -11,6 +11,7 @@ public class Dioptre {
 
     private static final List<String> dioptresStringList = createDioptresStringList();
 
+    // getter
     public static List<String> getDioptresStringList() {
         return dioptresStringList;
     }
