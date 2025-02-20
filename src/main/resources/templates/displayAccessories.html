@@ -145,7 +145,7 @@
         <table>
             <thead>
             <tr>
-                <th align="left">№</th>
+                <th align="left"><!-- зеленая галочка --></th>
                 <th align="left">Тип товара</th>
                 <th align="left">Фирма</th>
                 <th align="left">Модель</th>
@@ -165,16 +165,11 @@
             <tbody class="telo">
             <tr class="frame_row" data-th-each="container : ${page.getContent()}">
 
-                <!-- № и галочка-->
-                <td width="80">
+                <!-- зеленая галочка-->
+                <td width="20">
                     <div data-th-if="${container.id == xContainerId}">
-                        <span data-th-if="${sameContainerAlreadyExists}"
-                              data-th-text="${containerStat.count} +  ' &#9989;(+1)'"></span>
-                        <span data-th-unless="${sameContainerAlreadyExists}"
-                              data-th-text="${containerStat.count} +  ' &#9989;'"></span>
-                    </div>
-                    <div data-th-unless="${container.id == xContainerId}">
-                        <span data-th-text="${containerStat.count} + '  '"></span>
+                        <span data-th-if="${sameContainerAlreadyExists}">&#9989;(+1)</span>
+                        <span data-th-unless="${sameContainerAlreadyExists}">&#9989;</span>
                     </div>
                 </td>
 
@@ -304,8 +299,8 @@
                     <form method="post" data-th-action="@{/api/order/noSpec}">
                         <input type="hidden" name="xContainerId" data-th-value="${container.id}">
                         <span data-th-if="${currentOrder}"
-                              data-th-text="' &#9203; №' + ${currentOrder.getId()} + ', ' + ${currentOrder.getLastName()}"></span>
-                        <span data-th-unless="${currentOrder}">НЕ ВЫБРАН ТЕКУЩИЙ ЗАКАЗ...</span>
+                              data-th-text="'( &#9203; текущий заказ №' + ${currentOrder.getId()} + ', ' + ${currentOrder.getLastName() + ')'}"></span>
+                        <span data-th-unless="${currentOrder}">(НЕ ВЫБРАН ТЕКУЩИЙ ЗАКАЗ...)</span>
                         <input type="submit" value="Выбрать заказ">
                     </form>
                 </td>
@@ -325,7 +320,8 @@
         <table>
             <thead>
             <tr>
-                <th align="left">№</th>
+                <th align="left"><!-- зеленая галочка --></th>
+                <th align="left"><!--checkbox--></th>
                 <th align="left">Тип товара</th>
                 <th align="left">Фирма</th>
                 <th align="left">Модель</th>
@@ -344,80 +340,91 @@
 
             <tbody>
 
-            <tr data-th-each="container : ${page.getContent()}">
+            <!-- form (общ)-->
+            <form method="post" data-th-action="@{/api/accessory/check}">
 
-                <!-- № и галочка-->
-                <td width="80" align="left">
-                    <div data-th-if="${container.id == xContainerId}">
-                        <span data-th-if="${sameContainerAlreadyExists}"
-                              data-th-text="${containerStat.count} +  ' &#9989;(+1)'"></span>
-                        <span data-th-unless="${sameContainerAlreadyExists}"
-                              data-th-text="${containerStat.count} +  ' &#9989;'"></span>
-                    </div>
-                    <div data-th-unless="${container.id == xContainerId}">
-                        <span data-th-text="${containerStat.count} + '  '"></span>
-                    </div>
-                </td>
+                <tr data-th-each="container : ${page.getContent()}">
+                    <input type="hidden" name="xContainerId" data-th-value="${container.id}">
 
-                <!-- //////////////////////////////////////////////////////////////////////////////////////////////////////// -->
-                <td width="150" align="left"><!-- тип монтажа -->
-                    <label data-th-text="${container.getAccessoryCategory() == null ? null : container.getAccessoryCategory().getStr()}"></label>
-                </td>
-                <!-- //////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+                    <!-- зеленая галочка-->
+                    <td width="20">
+                        <div data-th-if="${container.id == xContainerId}">
+                            <span data-th-if="${sameContainerAlreadyExists}">&#9989;(+1)</span>
+                            <span data-th-unless="${sameContainerAlreadyExists}">&#9989;</span>
+                        </div>
+                    </td>
 
-                <td width="150" align="left"><!-- firm -->
-                    <label data-th-text="${container.firm}">*фирма*</label>
-                </td>
+                    <!-- ! checkbox ------------------------------------------------------------ -->
+                    <td width="20">
+                        <input type="checkbox" name="check"
+                               data-th-value="${container.id}">
 
-                <td width="150" align="left"><!-- model -->
-                    <label data-th-text="${container.model}">*модель*</label>
-                </td>
 
-                <td width="150" align="left"><!-- details -->
-                    <label data-th-text="${container.details}">*описание*</label>
-                </td>
+                    </td>
+                    <!-- ! ---------------------------------------------------------------------- -->
 
-                <td width="150" align="left"><!-- purchase -->
-                    <label data-th-text="${container.purchase}">*закупка*</label>
-                </td>
+                    <!-- //////////////////////////////////////////////////////////////////////////////////////////////////////// -->
+                    <td width="150" align="left"><!-- тип монтажа -->
+                        <label data-th-text="${container.getAccessoryCategory() == null ? null : container.getAccessoryCategory().getStr()}"></label>
+                    </td>
+                    <!-- //////////////////////////////////////////////////////////////////////////////////////////////////////// -->
 
-                <td width="150" align="left"><!-- sale -->
-                    <label data-th-text="${container.sale}">*продажа*</label>
-                </td>
+                    <td width="150" align="left"><!-- firm -->
+                        <label data-th-text="${container.firm}">*фирма*</label>
+                    </td>
 
-                <td align="left"><!-- Колличество (шт.) -->
-                    <span data-th-text="${#lists.size(container.getUnitList())}"></span>
-                </td>
+                    <td width="150" align="left"><!-- model -->
+                        <label data-th-text="${container.model}">*модель*</label>
+                    </td>
 
-                <!-- Копировать в поиск -->
-                <td>
-                    <form method="post" data-th-action="@{/api/accessory/copyToSearch}">
-                        <input type="hidden" name="xContainerId" data-th-value="${container.id}">
-                        <input type="submit" value="Copy&#8679;">
-                    </form>
-                </td>
+                    <td width="150" align="left"><!-- details -->
+                        <label data-th-text="${container.details}">*описание*</label>
+                    </td>
 
-                <!-- Добавить в заказ: ... -->
-                <td>
-                    <form method="post" data-th-action="@{/api/accessory/toOrder}">
-                        <input type="hidden" name="xContainerId" data-th-value="${container.id}">
-                        <input type="submit" value="Добавить в заказ:">
-                    </form>
-                </td>
+                    <td width="150" align="left"><!-- purchase -->
+                        <label data-th-text="${container.purchase}">*закупка*</label>
+                    </td>
 
-                <!-- № или 'Текущий заказ не назначен...' |Выбрать заказ-->
-                <td>
-                    <form method="post" data-th-action="@{/api/order/noSpec}">
-                        <input type="hidden" name="xContainerId" data-th-value="${container.id}">
-                        <span data-th-if="${currentOrder}"
-                              data-th-text="' &#9203; №' + ${currentOrder.getId()} + ', ' + ${currentOrder.getLastName()}"></span>
-                        <span data-th-unless="${currentOrder}">НЕ ВЫБРАН ТЕКУЩИЙ ЗАКАЗ...</span>
-                        <input type="submit" value="Выбрать заказ">
-                    </form>
-                </td>
-            </tr>
+                    <td width="150" align="left"><!-- sale -->
+                        <label data-th-text="${container.sale}">*продажа*</label>
+                    </td>
+
+                    <td align="left"><!-- Колличество (шт.) -->
+                        <span data-th-text="${#lists.size(container.getUnitList())}"></span>
+                    </td>
+                </tr>
+
             </tbody>
         </table>
+        <hr>
+
+        <div>
+            <table>
+                <tr>
+                    <td>
+                        <!-- Копировать в поиск -->
+                        <input type="submit" formaction="/api/accessory/copyToSearch" value="Copy&#8679;">
+                    </td>
+
+                    <td>
+                        <!-- Добавить в заказ: ... -->
+                        <input type="submit" formaction="/api/accessory/toOrder" value="Добавить в заказ:">
+                    </td>
+
+                    <td>
+                        <!-- № или 'Текущий заказ не назначен...' |Выбрать заказ-->
+                        <span data-th-if="${currentOrder}"
+                              data-th-text="'( &#9203; текущий заказ №' + ${currentOrder.getId()} + ', ' + ${currentOrder.getLastName() + ')'}"></span>
+                        <span data-th-unless="${currentOrder}">(НЕ ВЫБРАН ТЕКУЩИЙ ЗАКАЗ...)</span>
+                        <input type="submit" formaction="/api/order/noSpec" value="Выбрать заказ">
+
+                    </td>
+                </tr>
+            </table>
+
+        </div>
+        </form>
+
         <hr>
     </div>
     <br>

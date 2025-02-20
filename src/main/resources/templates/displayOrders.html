@@ -90,11 +90,9 @@
 
                 <td>
                     <!-- день рождения -->
-                    <input
-
-                            oninput="this.form.submit();"
-                            type="date" placeholder="Дата рождения"
-                            name="birthday" data-th-value="${filters.birthday}">
+                    <input oninput="this.form.submit();"
+                           type="date" placeholder="Дата рождения"
+                           name="birthday" data-th-value="${filters.birthday}">
                 </td>
 
                 <td>
@@ -264,16 +262,9 @@
                     <span data-th-if="${order.id == xOrderId}">&#9989;<!-- зеленая галочка --></span>
                 </td>
 
-                <!-- заказ № -->
-                <td width="60">
-                    <form method="post" data-th-action="@{/api/order/update}">
-                        <input readonly onblur=this.form.submit()
-                               class="num"
-                               type="number"
-                               data-th-name="id"
-                               data-th-value="${order.id}">
-                        <input type="hidden" name="xOrderId" data-th-value="${order.id}">
-                    </form>
+                <!--заказ № (id) -->
+                <td width="50" align="left">
+                    <label data-th-text="${order.id}"></label>
                 </td>
 
                 <!-- текущий? (песоч:&#9203;)-->
@@ -332,7 +323,7 @@
                         <input onblur=this.form.submit()
                                type="date"
                                data-th-name="birthday"
-                               data-th-value="${#temporals.format(ord.birthday, 'dd.MM.yyyy')}">
+                               data-th-value="${#temporals.format(order.birthday, 'dd.MM.yyyy')}">
                         <input type="hidden" name="xOrderId" data-th-value="${order.id}">
                     </form>
                 </td>
@@ -343,7 +334,7 @@
                         <input onblur=this.form.submit()
                                type="text"
                                data-th-name="passport"
-                               data-th-value="${ord.passport}">
+                               data-th-value="${order.passport}">
                         <input type="hidden" name="xOrderId" data-th-value="${order.id}">
                     </form>
                 </td>
@@ -423,7 +414,7 @@
                         <input onblur=this.form.submit()
                                type="text"
                                data-th-name="details"
-                               data-th-value="${order.details}">
+                               data-th-value="${order.clientDetails}">
                         <input type="hidden" name="xOrderId" data-th-value="${order.id}">
                     </form>
                 </td>
@@ -594,8 +585,7 @@
 
                 <!-- добавлено -->
                 <td>
-                    <span data-th-if="${orderRefreshed} and ${order.id == xOrderId}"
-                          data-th-text="'&#128190;Добавлен продукт: ' + ${unit.getFirm()}+' ' + ${unit.getModel()}"></span>
+                    <span data-th-if="${orderRefreshed} and ${order.id == xOrderId}">&#128190;Добавленo!</span>
                 </td>
 
             </tr>

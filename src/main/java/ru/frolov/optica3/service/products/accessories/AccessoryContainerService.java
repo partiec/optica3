@@ -35,14 +35,14 @@ public class AccessoryContainerService {
     private final AccessoryUnitRepository unitRepository;
     private final AccessorySpec accessorySpec;
     private final AccessoryCache accessoryCache;
-    private final OrderCache cache;
+    private final OrderCache orderCache;
 
     // -------------------------------------------------------------------------
     public void transferToModel(
             Model model,
             Page<AccessoryContainer> pageForModel,
             Integer pageNumberOnlyForFlip,
-            Long xId,
+            Long xContainerId,
             String whichFieldOnInputOnlyForSearch,
             String copyToSearch) {
 
@@ -79,10 +79,12 @@ public class AccessoryContainerService {
         }
 
 
-        // xOrderId
-        if (xId != null) {
-            model.addAttribute("xId", xId);
+        // xContainerId
+        if (xContainerId != null) {
+            model.addAttribute("xContainerId", xContainerId);
         }
+
+        model.addAttribute("checkedIdAndStringMap", getAccessoryCache().getChecks());
 
         // whichFieldOnInputOnlyForSearch
         if (whichFieldOnInputOnlyForSearch != null) {
@@ -108,7 +110,8 @@ public class AccessoryContainerService {
         ////////////////////////////
 
         // currentOrder
-        model.addAttribute("currentOrder", getCache().getCurrentOrder());
+        System.out.println("******" + getClass().getSimpleName() + ".transferToModel(){ currentOrder=" + getOrderCache().getCurrentOrder());
+        model.addAttribute("currentOrder", getOrderCache().getCurrentOrder());
     }
 
     public void killDubls(AccessoryContainer xContainer, List<AccessoryContainer> sublistExcept0) {

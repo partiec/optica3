@@ -16,9 +16,8 @@ import ru.frolov.optica3.service.order.OrderService;
 import ru.frolov.optica3.service.products.accessories.AccessoryContainerService;
 import ru.frolov.optica3.service.products.accessories.AccessoryUnitService;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Controller
@@ -38,19 +37,28 @@ public class ToOrder_AccessoryController
     @Transactional(isolation = Isolation.SERIALIZABLE)
     @PostMapping("toOrder")
     public String toOrder(
-            @RequestParam(name = "xContainerId") Long xContainerId,
-            Model model) {
+            @RequestParam(name = "xContainerId", required = false) Long xContainerId,
+            Model model,
+            @RequestParam(name = "check", required = false) Long... check) {
         /*
          * Задача:
          *   Отправить "раннюю" unit в заказ. Статус продукта должен измениться на ORDERED.
          *   Переход на displayOrders.
          * */
+
+
         System.out.println("======================================================================================");
         System.out.println(getClass().getSimpleName() + ".toOrder()...");
-        System.out.println("принят id контейнера: xContainerId=" + xContainerId);
+        System.out.println("принят xContainerId=" + xContainerId);
+        System.out.println("ПРИНЯТЫ check...=" + Arrays.toString(check));
 
-        AccessoryContainer xContainer = null;
-        AccessoryUnit earliest = null;
+        // кэшируем checks
+        Set<Long> checks = Arrays.stream(check).collect(Collectors.toSet());
+        containerService.getAccessoryCache().getChecks().addAll(checks);
+
+        Set<AccessoryContainer> xContainers = new HashSet<>();
+        Set<AccessoryUnit> earliests = new HashSet<>();
+
         Page<_Order> actualPage = null;
 
         // текущий заказ
@@ -67,39 +75,50 @@ public class ToOrder_AccessoryController
             // если currentOrder есть, то:
             System.out.println("Найден currentOrder.id=" + currentOrder.getId());
 
-            try {
-                // ищем xContainer по xContainerId
-                xContainer = containerService.findById(xContainerId).get();
-            } catch (NoSuchElementException e) {
-                // если не найден берем из кэша
-                xContainer = this.containerService.getAccessoryCache().getContainer();
+
+            // ищем xContainers по xContainerId или по check
+            //-------------------------------------------------
+            // если пришел check
+            if (!checks.isEmpty()) {
+
+                for (Long id : checks) {
+                    xContainers.add(containerService.findById(id).get());
+                }
+
+            } else {
+                // если check не пришел, то ищем xContainer по xContainerId
+                xContainers.add(containerService.findById(xContainerId).get());
             }
 
-            // Найти "раннюю" unit в контейнере
-            earliest = xContainer.getUnitList().stream()
-                    .min(Comparator.comparing(AccessoryUnit::getCreatedAt))
-                    .get();
-            System.out.println("Найдена 'ранняя' unit из xContainer/ ее id=" + earliest.getId());
 
-            // установить ей статус ORDERED и order = currentOrder
-            earliest.setProductStatus(ProductStatus.ORDERED);
-            earliest.setOrder(currentOrder);
-            // убрать внешний ключ на контейнер
-            earliest.setContainer(null);
+            // перебираем xContainers и ищем в них "ранние" unitы
+            for (AccessoryContainer container : xContainers) {
+                AccessoryUnit earliest = container.getUnitList().stream()
+                        .min(Comparator.comparing(AccessoryUnit::getCreatedAt))
+                        .get();
+                System.out.println("Найдена 'ранняя' unit из xContainer/ ее id=" + earliest.getId());
+                // установить ей статус ORDERED и order = currentOrder
+                earliest.setProductStatus(ProductStatus.ORDERED);
+                earliest.setOrder(currentOrder);
+                // убрать внешний ключ на контейнер
+                earliest.setContainer(null);
+                // добавить earliest в currentOrder и оповестить html
+                List<AccessoryUnit> orderUnits = currentOrder.getAccessoryUnits();
+                System.out.println("на данный момент в currentOrder есть аксессуары: " + orderUnits.toString());
+                orderUnits.add(earliest);
+                containerService.getOrderCache().setOrderRefreshed(true);
+                // убрать earliest из xContainer
+                List<AccessoryUnit> xContainerUnits = container.getUnitList();
+                xContainerUnits.remove(earliest);                                             // не должно быть CascadeType.ALL и orphanRemoval=true
+                // если в контейнере не осталось юнитов, то удалить контейнер
+                if (container.getUnitList().size() <= 0) {
+                    containerService.delete(container);
+                }
 
-            // добавить earliest в currentOrder и оповестить html
-            List<AccessoryUnit> orderUnits = currentOrder.getAccessoryUnits();
-            System.out.println("на данный момент в currentOrder есть аксессуары: " + orderUnits.toString());
-            orderUnits.add(earliest);
-            containerService.getCache().setOrderRefreshed(true);
 
-            // убрать earliest из xContainer
-            List<AccessoryUnit> xContainerUnits = xContainer.getUnitList();
-            xContainerUnits.remove(earliest);                                             // не должно быть CascadeType.ALL и orphanRemoval=true
-            // если в контейнере не осталось юнитов, то удалить контейнер
-            if (xContainer.getUnitList().size() <= 0) {
-                containerService.delete(xContainer);
+                earliests.add(earliest);  // нужен ли ?? раз мы все делаем в цикле для кажд
             }
+
 
             // actualPage должна содержать currentOrder
             actualPage = orderService.getXPage(currentOrder);
@@ -115,7 +134,7 @@ public class ToOrder_AccessoryController
                 actualPage,
                 null,
                 currentOrder == null ? null : currentOrder.getId(),
-                earliest,
+                null,
                 null,
                 null
         );

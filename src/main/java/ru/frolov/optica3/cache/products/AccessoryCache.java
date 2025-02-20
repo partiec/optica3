@@ -9,6 +9,9 @@ import ru.frolov.optica3.dto.products.AccessoryDto;
 import ru.frolov.optica3.entity.products.accessory.AccessoryContainer;
 import ru.frolov.optica3.entity.products.accessory.AccessoryUnit;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Component
 @Getter
 @Setter
@@ -20,6 +23,8 @@ public class AccessoryCache {
     private AccessoryContainer container;
     private AccessoryUnit unit;
     private Boolean mode;
+
+    private Set<Long> checks = new HashSet<>();
 
     // hint method for cache
     public void cacheAttributesNotNull(Page<AccessoryContainer> page,

@@ -24,7 +24,7 @@ public class OrderCache {
     public void cacheAttributesIfNotNull(Page<_Order> page,
                                          OrderAndClientDto dto,
                                          Specification<_Order> specification,
-                                         _Order order,
+                                         _Order currentOrder,
                                          Boolean orderRefreshed,
                                          Boolean mode) {
 
@@ -34,8 +34,8 @@ public class OrderCache {
             this.dto = dto;
         if (specification != null)
             this.spec = specification;
-        if (order != null)
-            this.currentOrder = order;
+        if (currentOrder != null)
+            this.currentOrder = currentOrder;
         if (orderRefreshed != null)
             this.orderRefreshed = orderRefreshed;
         if (mode != null)

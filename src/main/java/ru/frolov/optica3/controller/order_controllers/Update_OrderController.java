@@ -33,6 +33,7 @@ public class Update_OrderController
          * */
 
         System.out.println("==================================================");
+        System.out.println("==================================================");
         System.out.println(getClass().getSimpleName() + ".update()...");
         System.out.println("принят xOrderId=" + xOrderId);
         System.out.println("принято dto(" +
@@ -42,23 +43,17 @@ public class Update_OrderController
         _Order xOrder = orderService.findById(xOrderId).get();
 
 
-        // если пришло not null, то устанавливаем, затирая старое
+        // если пришло getCurrent, то устанавливаем, затирая старое значение
         //--------------------------------------------------------
         if (dto.getCurrent() != null) {
 
-            // Есть ли current на данный момент
-            _Order currentOrder = orderService.findCurrent();
+            xOrder.setCurrent(dto.getCurrent());
 
-            // если найден xCurrent, то делаем его не текущим
-            if (currentOrder != null) {
-                System.out.println("найден current c id=" + currentOrder.getId() + "; делаем его не current");
-                currentOrder.setCurrent(false);
+            if (dto.getCurrent() == true) {
+                orderService.getCache().setCurrentOrder(xOrder);
+            } else {
                 orderService.getCache().setCurrentOrder(null);
             }
-
-            // для xOrder устанавливаем значение из dto
-            xOrder.setCurrent(dto.getCurrent());
-            orderService.getCache().setCurrentOrder(xOrder);
         }
 
         if (dto.getStage() != null) {
