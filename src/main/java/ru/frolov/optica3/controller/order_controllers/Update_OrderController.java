@@ -39,8 +39,10 @@ public class Update_OrderController
         System.out.println("принято dto(" +
                 dto.toString());
 
-        // находим нужный заказ по xOrderId
         _Order xOrder = orderService.findById(xOrderId).get();
+
+        _Order current = orderService.findCurrent();
+        System.out.println("сейчас current это: id=" + (current == null ? "current is null" : current.getId()));
 
 
         // если пришло getCurrent, то устанавливаем, затирая старое значение
@@ -49,11 +51,19 @@ public class Update_OrderController
 
             xOrder.setCurrent(dto.getCurrent());
 
+            // если пришло true
             if (dto.getCurrent() == true) {
+
+                // кэшируем xOrder как новый current, старый затирается
                 orderService.getCache().setCurrentOrder(xOrder);
-            } else {
+                // старому currentу ставим false
+                if (current != null) current.setCurrent(null);
+
+            } else if (dto.getCurrent() == false) {
+                // если false, очищаем кэш
                 orderService.getCache().setCurrentOrder(null);
             }
+
         }
 
         if (dto.getStage() != null) {
