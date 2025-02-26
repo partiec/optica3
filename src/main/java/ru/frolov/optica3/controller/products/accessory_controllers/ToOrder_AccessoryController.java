@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.frolov.optica3.entity.order._Order;
@@ -39,7 +40,9 @@ public class ToOrder_AccessoryController
     public String toOrder(
             @RequestParam(name = "xContainerId", required = false) Long xContainerId,
             Model model,
-            @RequestParam(name = "check", required = false) Long... check) {
+            @RequestParam(name = "otherOrder", required = false) String otherOrder,
+            @RequestParam(name = "check", required = false) Long... check
+    ) {
         /*
          * Задача:
          *   Отправить "раннюю" unit в заказ. Статус продукта должен измениться на ORDERED.
@@ -52,23 +55,35 @@ public class ToOrder_AccessoryController
         System.out.println("принят xContainerId=" + xContainerId);
         System.out.println("ПРИНЯТЫ check...=" + Arrays.toString(check));
 
-        // кэшируем checks
-        Set<Long> checks = Arrays.stream(check).collect(Collectors.toSet());
-        containerService.getAccessoryCache().getChecks().addAll(checks);
-
-        Set<AccessoryContainer> xContainers = new HashSet<>();
-        Set<AccessoryUnit> earliests = new HashSet<>();
-
+        List<AccessoryContainer> xContainers = new ArrayList<>();
+        List<AccessoryUnit> earliests = new ArrayList<>();
         Page<_Order> actualPage = null;
 
+        // не имеется ли УЖЕ в кэше чеков
+        Set<Long> alreadyChecks = containerService.getAccessoryCache().getChecks();
+        System.out.println("в кэше уже есть чеки = " + alreadyChecks.size());
+
+
+        // кэшируем checks
+        Set<Long> checksRecieved = new HashSet<>();
+        if (check != null) {
+            checksRecieved = Arrays.stream(check).collect(Collectors.toSet());
+            containerService.getAccessoryCache().getChecks().addAll(checksRecieved);
+        }
+
+        _Order currentOrder;
         // текущий заказ
-        _Order currentOrder = orderService.findCurrent();
-        // Если нет текущего заказа, то предупреждение и page без изменений
+        if (otherOrder != null) {
+            currentOrder = null;
+        } else {
+            currentOrder = orderService.findCurrent();
+        }
+        // Если нет текущего заказа
         if (currentOrder == null) {
             System.out.println("нет текущ ордера");
             model.addAttribute("noCurrent", "noCurrent");
             // отправляем в модель неизмененную Page<_Order> из кэша
-            actualPage = orderService.getCache().getPage();
+            actualPage = orderService.getOrderCache().getPage();
 
 
         } else {
@@ -78,18 +93,32 @@ public class ToOrder_AccessoryController
 
             // ищем xContainers по xContainerId или по check
             //-------------------------------------------------
+            // если в кэше уже были checks
+            if (alreadyChecks.size() > 0) {
+                for (Long id : alreadyChecks) {
+                    xContainers.add(containerService.findById(id).get());
+                }
+            }
             // если пришел check
-            if (!checks.isEmpty()) {
+            else if (checksRecieved.size() > 0) {
 
-                for (Long id : checks) {
+                for (Long id : checksRecieved) {
                     xContainers.add(containerService.findById(id).get());
                 }
 
             } else {
                 // если check не пришел, то ищем xContainer по xContainerId
-                xContainers.add(containerService.findById(xContainerId).get());
+                // а если xContainerId нету, значит мы пришли сюда из update
+                Optional<AccessoryContainer> xContainerOpt = containerService.findById(xContainerId);
+                if (xContainerOpt.isPresent()) {
+                    xContainers.add(xContainerOpt.get());
+                } else {
+
+                }
             }
 
+            // чистим checks
+            containerService.getAccessoryCache().setChecks(new HashSet<>());
 
             // перебираем xContainers и ищем в них "ранние" unitы
             for (AccessoryContainer container : xContainers) {
@@ -141,7 +170,7 @@ public class ToOrder_AccessoryController
 
         // Контрольное кэширование. Используем orderService !!!
         // ----------------------->
-        orderService.getCache().cacheAttributesIfNotNull(
+        orderService.getOrderCache().cacheAttributesIfNotNull(
                 actualPage,
                 null,
                 null,
@@ -151,5 +180,16 @@ public class ToOrder_AccessoryController
         );
 
         return "displayOrders";
+    }
+
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @GetMapping("toOrder")
+    public String toOrderGet(
+            @RequestParam(name = "xContainerId", required = false) Long xContainerId,
+            Model model,
+            @RequestParam(name = "otherOrder", required = false) String otherOrder,
+            @RequestParam(name = "check", required = false) Long... check) {
+
+        return toOrder(xContainerId, model, otherOrder, check);
     }
 }

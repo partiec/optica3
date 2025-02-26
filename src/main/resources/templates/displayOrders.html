@@ -276,13 +276,14 @@
                         <input type="hidden" name="current" data-th-value="false">
                         <input type="submit" value="Отменить">
                     </form>
-                    <form data-th-if="${order.getCurrent() == false}" method="post"
+                    <form data-th-if="${order.getCurrent() == false or order.getCurrent() == null}" method="post"
                           data-th-action="@{/api/order/update}">
                         <input type="hidden" name="xOrderId" data-th-value="${order.id}">
                         <input type="hidden" name="current" data-th-value="true">
-                        <input type="submit" value="Сделать текущим">
+                        <input type="submit" value="Выбрать">
                     </form>
                 </td>
+
 
                 <!-- фамилия -->
                 <td width="60">
@@ -498,7 +499,7 @@
                     <label data-th-text="${order.id}"></label>
                 </td>
 
-                <!-- current? -->
+                <!-- текущий? -->
                 <td width="100">
                     <form data-th-if="${order.getCurrent() == true}" method="post"
                           data-th-action="@{/api/order/update}">
@@ -507,13 +508,14 @@
                         <input type="hidden" name="current" data-th-value="false">
                         <input type="submit" value="Отменить">
                     </form>
-                    <form data-th-unless="${order.getCurrent() == true}" method="post"
+                    <form data-th-if="${order.getCurrent() == false or order.getCurrent() == null}" method="post"
                           data-th-action="@{/api/order/update}">
                         <input type="hidden" name="xOrderId" data-th-value="${order.id}">
                         <input type="hidden" name="current" data-th-value="true">
-                        <input type="submit" value="Сделать текущим">
+                        <input type="submit" value="Выбрать">
                     </form>
                 </td>
+
 
                 <!--lastName -->
                 <td width="70" align="left">

@@ -51,7 +51,7 @@ public class ToOrder_FrameController
         if (currentOrder == null) {
             model.addAttribute("noCurrent", "noCurrent");
             // отправляем в модель неизмененную Page<_Order> из кэша
-            actualPage = orderService.getCache().getPage();
+            actualPage = orderService.getOrderCache().getPage();
         } else {
             // если currentOrder есть, то:
             //  - "раннюю" unit отправить в current
@@ -94,7 +94,7 @@ public class ToOrder_FrameController
 
         // Контрольное кэширование. Используем orderService !!!
         // ----------------------->
-        orderService.getCache().cacheAttributesIfNotNull(
+        orderService.getOrderCache().cacheAttributesIfNotNull(
                 actualPage,
                 null,
                 null,

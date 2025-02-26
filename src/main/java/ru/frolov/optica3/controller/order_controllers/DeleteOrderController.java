@@ -44,8 +44,8 @@ public class DeleteOrderController
         // Подготовка данных для модели
         // ----------------------------->
         // page должна остаться с тем же номером и spec, но обновлена с учетом удаленного
-        int pageNumber = orderService.getCache().getPage().getNumber();
-        Specification<_Order> specification = orderService.getCache().getSpec();
+        int pageNumber = orderService.getOrderCache().getPage().getNumber();
+        Specification<_Order> specification = orderService.getOrderCache().getSpec();
 
         // создать page в зависимости от specStatus
         Page<_Order> actualPage;
@@ -70,7 +70,7 @@ public class DeleteOrderController
 
         // Контрольное кэширование
         // ----------------------->
-        orderService.getCache().cacheAttributesIfNotNull(
+        orderService.getOrderCache().cacheAttributesIfNotNull(
                 actualPage,
                 null,
                 null,

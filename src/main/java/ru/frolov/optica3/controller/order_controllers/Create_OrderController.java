@@ -68,7 +68,7 @@ public class Create_OrderController
         // Подготавливаем данные для модели
         // -------------------------------->
         // page должна быть no spec
-        orderService.getCache().setSpec(null);
+        orderService.getOrderCache().setSpec(null);
         // page создаем с помощью локального метода getXPageNoSpec()!, поскольку она должна содержать xContainer
         Page<_Order> actualPage = orderService.getXPage(newOrder);
         // xOrderId нужен будет в html для галочки (которая помечает созданный контейнер)
@@ -81,7 +81,7 @@ public class Create_OrderController
         System.out.println("=============");
 
         // filters уже не нужны, кэшируем костыль
-        orderService.getCache().setDto(new OrderAndClientDto());
+        orderService.getOrderCache().setDto(new OrderAndClientDto());
         //----------------------------/
 
         // В модель
@@ -96,7 +96,7 @@ public class Create_OrderController
                 null);
 
         // Контрольное кеширование
-        orderService.getCache().cacheAttributesIfNotNull(
+        orderService.getOrderCache().cacheAttributesIfNotNull(
                 actualPage,
                 null,
                 null,
@@ -118,9 +118,9 @@ public class Create_OrderController
         // errors для отображения messages
         model.addAttribute("errors", br.getAllErrors().stream().map(ObjectError::getDefaultMessage).toList());
         // page должна остаться как была
-        model.addAttribute("page", orderService.getCache().getPage());
+        model.addAttribute("page", orderService.getOrderCache().getPage());
         // filters должны остаться те же
-        model.addAttribute("filters", orderService.getCache().getDto());
+        model.addAttribute("filters", orderService.getOrderCache().getDto());
 
         // cache не требуется
 

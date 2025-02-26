@@ -37,11 +37,11 @@ public class CopyToSearch_OrderController
         // создаем dto на основе xOrder
         OrderAndClientDto dto = createDtoByOrder(xOrder);
 
-        orderService.getCache().setDto(dto);
+        orderService.getOrderCache().setDto(dto);
 
         // page без изменений
         Page<_Order> samePage =
-                orderService.getCache().getPage();
+                orderService.getOrderCache().getPage();
 
 
         // Отправляем данные в модель
@@ -57,7 +57,7 @@ public class CopyToSearch_OrderController
 
         // Контрольное кэширование
         // ----------------------->
-        orderService.getCache().cacheAttributesIfNotNull(
+        orderService.getOrderCache().cacheAttributesIfNotNull(
                 samePage,
                 null,
                 null,

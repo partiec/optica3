@@ -39,11 +39,11 @@ public class Search_OrderController
         // Подготовка данных для модели
         // --------------------------->
         // кэшируем принятое dto
-        orderService.getCache().setDto(dto);
+        orderService.getOrderCache().setDto(dto);
 
         // page однозначно должна быть bySpec
         Specification<_Order> specification = orderService.getSpec().allContains(dto);
-        orderService.getCache().setSpec(specification);
+        orderService.getOrderCache().setSpec(specification);
 
         // создаем page №0 по spec (spec уже в кэше)
         Page<_Order> actualPage =
@@ -62,7 +62,7 @@ public class Search_OrderController
                 null);
 
         // Контрольное кэширование
-        orderService.getCache().cacheAttributesIfNotNull(
+        orderService.getOrderCache().cacheAttributesIfNotNull(
                 actualPage,
                 dto,
                 null,

@@ -25,7 +25,7 @@ public class EditMode_OrderController
          * */
 
         // включить режим редактирования
-        orderService.getCache().setMode(true);
+        orderService.getOrderCache().setMode(true);
 
         // Подготовка данных для модели
         // ----------------------------->
@@ -34,7 +34,7 @@ public class EditMode_OrderController
         // page остается без изменений
         orderService.transferToModel(
                 model,
-                orderService.getCache().getPage(),
+                orderService.getOrderCache().getPage(),
                 null,
                 null,
                 null,
@@ -44,7 +44,7 @@ public class EditMode_OrderController
 
         // Контрольное кэширование
         // ----------------------->
-        orderService.getCache().cacheAttributesIfNotNull(
+        orderService.getOrderCache().cacheAttributesIfNotNull(
                 null,
                 null,
                 null,
@@ -62,7 +62,7 @@ public class EditMode_OrderController
          * Задача:
          *   Выключить режим редактирования. Все должно остаться как было.
          * */
-        orderService.getCache().setMode(false);
+        orderService.getOrderCache().setMode(false);
 
 
         // Отправляем данные в модель
@@ -70,7 +70,7 @@ public class EditMode_OrderController
         // page без изменений
         orderService.transferToModel(
                 model,
-                orderService.getCache().getPage(),
+                orderService.getOrderCache().getPage(),
                 null,
                 null,
                 null,
@@ -80,7 +80,7 @@ public class EditMode_OrderController
 
         // Контрольное кэширование
         // ----------------------->
-        orderService.getCache().cacheAttributesIfNotNull(
+        orderService.getOrderCache().cacheAttributesIfNotNull(
                 null,
                 null,
                 null,

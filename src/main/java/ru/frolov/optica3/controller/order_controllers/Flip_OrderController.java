@@ -31,7 +31,7 @@ public class Flip_OrderController
         // ------------------------------>
         // page должна быть с другим pageNumber, но specification та же
         Page<_Order> actualPage;
-        Specification<_Order> specification = orderService.getCache().getSpec();
+        Specification<_Order> specification = orderService.getOrderCache().getSpec();
         if (specification != null) {
             actualPage = orderService.getPageBYSpec(pageNumber, specification);
         } else {
@@ -50,7 +50,7 @@ public class Flip_OrderController
                 null);
 
         // Контрольное кэширование
-        orderService.getCache().cacheAttributesIfNotNull(
+        orderService.getOrderCache().cacheAttributesIfNotNull(
                 actualPage,
                 null,
                 null,

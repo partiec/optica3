@@ -31,10 +31,10 @@ public class ClearInputs_OrderController
         // Подготовка данных
         //-------------------
         // Кэшируем пустую dto. Из него пустые значения "очистят" поля html
-        orderService.getCache().setDto(new OrderAndClientDto());
+        orderService.getOrderCache().setDto(new OrderAndClientDto());
 
         // page берем из кэша и отправляем без изменений
-        Page<_Order> samePage = orderService.getCache().getPage();
+        Page<_Order> samePage = orderService.getOrderCache().getPage();
 
 
         // Отправляем данные в модель
@@ -50,7 +50,7 @@ public class ClearInputs_OrderController
 
         // Контрольное кэширование
         // ----------------------->
-        orderService.getCache().cacheAttributesIfNotNull(
+        orderService.getOrderCache().cacheAttributesIfNotNull(
                 samePage,
                 null,
                 null,

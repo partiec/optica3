@@ -10,19 +10,33 @@ import org.springframework.web.bind.annotation.RequestParam;
 import ru.frolov.optica3.dto._order.OrderAndClientDto;
 import ru.frolov.optica3.entity.order._Order;
 import ru.frolov.optica3.service.order.OrderService;
+import ru.frolov.optica3.service.products.accessories.AccessoryContainerService;
+import ru.frolov.optica3.service.products.contacts.ContactContainerService;
+import ru.frolov.optica3.service.products.frames.FrameContainerService;
+import ru.frolov.optica3.service.products.glasses.GlassContainerService;
+
+import java.util.Set;
 
 @Controller
 public class Update_OrderController
         extends AbstractOrderController {
 
+    private final AccessoryContainerService accessoryContainerService;
+    private final ContactContainerService contactContainerService;
+    private final FrameContainerService frameContainerService;
+    private final GlassContainerService glassContainerService;
 
-    public Update_OrderController(OrderService orderService) {
+    public Update_OrderController(OrderService orderService, AccessoryContainerService accessoryContainerService, ContactContainerService contactContainerService, FrameContainerService frameContainerService, GlassContainerService glassContainerService) {
         super(orderService);
+        this.accessoryContainerService = accessoryContainerService;
+        this.contactContainerService = contactContainerService;
+        this.frameContainerService = frameContainerService;
+        this.glassContainerService = glassContainerService;
     }
 
     @Transactional
     @PostMapping("update")
-    public String update(@RequestParam(name = "xOrderId") Long xOrderId,
+    public String update(@RequestParam(name = "xOrderId", required = false) Long xOrderId,
                          OrderAndClientDto dto,
                          Model model) {
 
@@ -32,39 +46,49 @@ public class Update_OrderController
          *   Обновить и отобразить страницу.
          * */
 
-        System.out.println("==================================================");
+
         System.out.println("==================================================");
         System.out.println(getClass().getSimpleName() + ".update()...");
         System.out.println("принят xOrderId=" + xOrderId);
         System.out.println("принято dto(" +
                 dto.toString());
 
-        _Order xOrder = orderService.findById(xOrderId).get();
 
+        // текущий ордер
         _Order current = orderService.findCurrent();
         System.out.println("сейчас current это: id=" + (current == null ? "current is null" : current.getId()));
+        if (current != null) {
+            current.setCurrent(null);
+        }
 
+        // xOrder
+        _Order xOrder = orderService.findById(xOrderId).get();
+        System.out.println("xOrder.id = " + xOrder.getId());
 
-        // если пришло getCurrent, то устанавливаем, затирая старое значение
-        //--------------------------------------------------------
+        // устанавливае поля, которые not null
+        //-------------------------------------
         if (dto.getCurrent() != null) {
 
+            // обновляем xOrder
             xOrder.setCurrent(dto.getCurrent());
 
-            // если пришло true
-            if (dto.getCurrent() == true) {
+            // заново ищем current
+            current = orderService.findCurrent();
 
-                // кэшируем xOrder как новый current, старый затирается
-                orderService.getCache().setCurrentOrder(xOrder);
-                // старому currentу ставим false
-                if (current != null) current.setCurrent(null);
-
-            } else if (dto.getCurrent() == false) {
-                // если false, очищаем кэш
-                orderService.getCache().setCurrentOrder(null);
-            }
+            // cache
+            orderService.getOrderCache().setCurrentOrder(current);
 
         }
+
+        // ЕСЛИ В ТОВАРНОМ КЭШЕ ЧТО-ТО ЕСТЬ, СРАЗУ В ЗАКАЗ
+        System.out.println("[ accessoryContainerService.getAccessoryCache().getChecks().size()=" + accessoryContainerService.getAccessoryCache().getChecks().size());
+        Set<Long> checks = accessoryContainerService.getAccessoryCache().getChecks();
+        if (checks.size() > 0) {         // !
+            System.out.println("[ACCESSORY CACHE IS NOT EMPTY] redirect:/api/accessory/toOrder");
+            // ЗАКЭШИРОВАТЬ xOrder !!! Будет доступен в toOrder !!!
+            orderService.getOrderCache().setCurrentOrder(xOrder);
+            return "redirect:/api/accessory/toOrder";
+        }//...остальные кэши...
 
         if (dto.getStage() != null) {
             xOrder.setStage(dto.getStage());
@@ -79,22 +103,25 @@ public class Update_OrderController
             xOrder.setPrice(dto.getPrice());
         }
         if (dto.getLastName() != null) {
-            xOrder.getClient().setLastName(dto.getLastName());
+            xOrder.setLastName(dto.getLastName());
         }
         if (dto.getFirstName() != null) {
-            xOrder.getClient().setFirstName(dto.getFirstName());
+            xOrder.setFirstName(dto.getFirstName());
         }
         if (dto.getBirthday() != null) {
-            xOrder.getClient().setBirthday(dto.getBirthday());
+            xOrder.setBirthday(dto.getBirthday());
         }
         if (dto.getPatronymic() != null) {
-            xOrder.getClient().setPatronymic(dto.getPatronymic());
+            xOrder.setPatronymic(dto.getPatronymic());
         }
         if (dto.getPassport() != null) {
-            xOrder.getClient().setPassport(dto.getPassport());
+            xOrder.setPassport(dto.getPassport());
         }
         if (dto.getClientDetails() != null) {
-            xOrder.getClient().setDetails(dto.getClientDetails());
+            xOrder.setClientDetails(dto.getClientDetails());
+        }
+        if (dto.getOrderDetails() != null) {
+            xOrder.setOrderDetails(dto.getOrderDetails());
         }
 
 
@@ -104,8 +131,8 @@ public class Update_OrderController
         // Подготовка данных для модели
         // ---------------------------->
         // новая page должна остаться с тем же номером и spec
-        int pageNumber = orderService.getCache().getPage().getNumber();
-        Specification<_Order> specification = orderService.getCache().getSpec();
+        int pageNumber = orderService.getOrderCache().getPage().getNumber();
+        Specification<_Order> specification = orderService.getOrderCache().getSpec();
         Page<_Order> actualPage;
         if (specification != null) {
             actualPage = orderService.getPageBYSpec(pageNumber, specification);
@@ -126,7 +153,7 @@ public class Update_OrderController
 
         // Контрольное кэширование
         // ------------------------->
-        orderService.getCache().cacheAttributesIfNotNull(
+        orderService.getOrderCache().cacheAttributesIfNotNull(
                 actualPage,
                 dto,
                 null,
@@ -138,4 +165,6 @@ public class Update_OrderController
 
         return "displayOrders";
     }
+
+
 }

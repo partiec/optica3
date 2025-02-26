@@ -157,8 +157,6 @@
                 <th><!-- -1 --></th>
                 <th><!-- Удалить позицию --></th>
                 <th><!-- Копир. в поиск --></th>
-                <th><!-- Добавить в заказ --></th>
-                <th><!-- Такой-то заказ |Выбрать  --></th>
             </tr>
             </thead>
 
@@ -286,25 +284,6 @@
                     </form>
                 </td>
 
-                <!-- Добавить в заказ: ... -->
-                <td>
-                    <form method="post" data-th-action="@{/api/accessory/toOrder}">
-                        <input type="hidden" name="xContainerId" data-th-value="${container.id}">
-                        <input type="submit" value="Добавить в заказ:">
-                    </form>
-                </td>
-
-                <!-- № или 'НЕТ ТЕКУЩЕГО ЗАКАЗА...' |Выбрать-->
-                <td>
-                    <form method="post" data-th-action="@{/api/order/noSpec}">
-                        <input type="hidden" name="xContainerId" data-th-value="${container.id}">
-                        <span data-th-if="${currentOrder}"
-                              data-th-text="'( &#9203; текущий заказ №' + ${currentOrder.getId()} + ', ' + ${currentOrder.getLastName() + ')'}"></span>
-                        <span data-th-unless="${currentOrder}">(НЕ ВЫБРАН ТЕКУЩИЙ ЗАКАЗ...)</span>
-                        <input type="submit" value="Выбрать заказ">
-                    </form>
-                </td>
-
             </tr>
             </tbody>
         </table>
@@ -317,31 +296,33 @@
 
     <div data-th-unless="${editMode}" id="accessory_no_edit_table">
         <hr>
-        <table>
-            <thead>
-            <tr>
-                <th align="left"><!-- зеленая галочка --></th>
-                <th align="left"><!--checkbox--></th>
-                <th align="left">Тип товара</th>
-                <th align="left">Фирма</th>
-                <th align="left">Модель</th>
-                <th align="left">Описание</th>
-                <th align="left">Закупка (руб.)</th>
-                <th align="left">Розница (руб.)</th>
-                <th align="left">Количество (шт.)</th>
-                <th><!-- +1 --></th>
-                <th><!-- -1 --></th>
-                <th><!-- Удалить позицию --></th>
-                <th><!-- Копировать в поиск --></th>
-                <th><!-- Добавить в заказ --></th>
-                <th><!-- Такой-то заказ |Изменить --></th>
-            </tr>
-            </thead>
+        <!-- form (общ)-->
+        <form method="post" data-th-action="@{/api/accessory/check}">
+            <table>
+                <thead>
+                <tr>
+                    <th align="left"><!-- зеленая галочка --></th>
+                    <th align="left"><!--checkbox--></th>
+                    <th align="left">Тип товара</th>
+                    <th align="left">Фирма</th>
+                    <th align="left">Модель</th>
+                    <th align="left">Описание</th>
+                    <th align="left">Закупка (руб.)</th>
+                    <th align="left">Розница (руб.)</th>
+                    <th align="left">Количество (шт.)</th>
+                    <th><!-- +1 --></th>
+                    <th><!-- -1 --></th>
+                    <th><!-- Удалить позицию --></th>
+                    <th><!-- Копировать в поиск --></th>
+                    <th><!-- Добавить в заказ --></th>
+                    <th><!-- Текущий такой-то заказ |посмотреть|  --></th>
+                    <th><!-- Выбрать др.  --></th>
 
-            <tbody>
+                </tr>
+                </thead>
 
-            <!-- form (общ)-->
-            <form method="post" data-th-action="@{/api/accessory/check}">
+                <tbody>
+
 
                 <tr data-th-each="container : ${page.getContent()}">
                     <input type="hidden" name="xContainerId" data-th-value="${container.id}">
@@ -393,13 +374,11 @@
                         <span data-th-text="${#lists.size(container.getUnitList())}"></span>
                     </td>
                 </tr>
-
-            </tbody>
-        </table>
-        <hr>
-
-        <div>
-            <table>
+                <tr>
+                    <td>
+                        <hr>
+                    </td>
+                </tr>
                 <tr>
                     <td>
                         <!-- Копировать в поиск -->
@@ -408,22 +387,29 @@
 
                     <td>
                         <!-- Добавить в заказ: ... -->
-                        <input type="submit" formaction="/api/accessory/toOrder" value="Добавить в заказ:">
+                        <input type="submit" formaction="/api/accessory/toOrder" value="Добавить в заказ">
                     </td>
 
+                    <td colspan="2">
+                        <!-- № или 'Текущий заказ не назначен...'-->
+                        <a data-th-if="${currentOrder}"  data-th-href="@{/api/order/includes}">
+                            <span data-th-text="'  (&#9203;  №' + ${currentOrder.getId()} + ', ' + ${currentOrder.getLastName() + ')'}"></span>
+                        </a>
+                        <span data-th-unless="${currentOrder}">(НЕ ВЫБРАН ЗАКАЗ...)</span>
+                    </td>
+
+                    <!-- В другой заказ -->
                     <td>
-                        <!-- № или 'Текущий заказ не назначен...' |Выбрать заказ-->
-                        <span data-th-if="${currentOrder}"
-                              data-th-text="'( &#9203; текущий заказ №' + ${currentOrder.getId()} + ', ' + ${currentOrder.getLastName() + ')'}"></span>
-                        <span data-th-unless="${currentOrder}">(НЕ ВЫБРАН ТЕКУЩИЙ ЗАКАЗ...)</span>
-                        <input type="submit" formaction="/api/order/noSpec" value="Выбрать заказ">
-
+                        <input type="submit" formaction="/api/accessory/toOrder" name="otherOrder" value="В другой заказ">
                     </td>
-                </tr>
-            </table>
 
-        </div>
+                </tr>
+
+
+                </tbody>
+            </table>
         </form>
+
 
         <hr>
     </div>

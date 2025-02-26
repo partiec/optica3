@@ -32,7 +32,7 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final ClientRepository clientRepository;
-    private final OrderCache cache;
+    private final OrderCache orderCache;
     private final OrderSpec spec;
     //---------------------------------------------------------
 
@@ -45,7 +45,7 @@ public class OrderService {
             String whichFieldOnInputOnlyForSearch,
             String copyToSearch) {
 
-        System.out.println("==============================================================================");
+        System.out.println("---");
         System.out.println(getClass().getSimpleName() + ".transferToModel()...");
 
         /*
@@ -58,26 +58,24 @@ public class OrderService {
         model.addAttribute("page", actualPage);
 
         // filters
-        model.addAttribute("filters", getCache().getDto());                                                         //  !
+        model.addAttribute("filters", getOrderCache().getDto());                                                         //  !
 
         // db orders
-        System.out.println("...поиск всех ордеров в бд...");
         List<_Order> dbOrders = orderRepository.findAll();
         model.addAttribute("dbOrders", dbOrders.size());
 
         // foundOrders
-        if (getCache().getSpec() == null) {
+        if (getOrderCache().getSpec() == null) {
             model.addAttribute("foundOrders", dbOrders.size());
         } else {
             System.out.println("... поиск ордеров по спец ...");
-            List<_Order> foundOrders = orderRepository.findAll(getCache().getSpec());
+            List<_Order> foundOrders = orderRepository.findAll(getOrderCache().getSpec());
             model.addAttribute("foundOrders", foundOrders.size());
         }
 
 
         // xOrderId
         if (xOrderId != null) {
-            System.out.println("в модель передается xOrderId=" + xOrderId);
             model.addAttribute("xOrderId", xOrderId);
         }
 
@@ -86,11 +84,11 @@ public class OrderService {
             model.addAttribute("whichFieldOnInput", whichFieldOnInputOnlyForSearch);
         }
 
-        if (getCache().getSpec() == null) {
+        if (getOrderCache().getSpec() == null) {
             model.addAttribute("message_itsFullList", "message_itsFullList");
         }
 
-        if (getCache().getOrderRefreshed() != null && getCache().getOrderRefreshed()) {
+        if (getOrderCache().getOrderRefreshed() != null && getOrderCache().getOrderRefreshed()) {
             model.addAttribute("orderRefreshed", "orderRefreshed");
         }
 
@@ -98,7 +96,7 @@ public class OrderService {
             model.addAttribute("unit", unit);
         }
 
-        if (getCache().getMode()) {
+        if (getOrderCache().getMode()) {
             model.addAttribute("editMode", "editMode");
         }
 
@@ -113,9 +111,8 @@ public class OrderService {
         model.addAttribute("stages", OrderStage.values());
         ////////////////////////////
 
-
-        System.out.println("___конец метода transferToModel()");
     }
+
 
 
     public List<_Order> getListNOSpec() {
